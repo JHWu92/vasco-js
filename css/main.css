@@ -1,0 +1,23 @@
+circle:hover {
+    fill: #2ca25f;
+}
+
+.bound {
+    stroke: steelblue;
+    stroke-width: 1px;
+    /*stroke-linecap: round;*/
+}
+
+svg {
+    border: 1px solid grey;
+}
+
+.idx-ln{
+    stroke: black;
+    stroke-width: 5px;
+}
+
+.idx-ln:hover{
+    stroke: #2ca25f;
+    stroke-width: 6px;
+}

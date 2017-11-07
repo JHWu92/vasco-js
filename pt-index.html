@@ -1,0 +1,50 @@
+<!doctype html>
+
+<html>
+
+<head>
+    <title>Points Indexing</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0">
+    <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body>
+    <p>Other data types: <a href="#">Lines</a>, <a href="#">Rectangulars</a>, <a href="#">Regions</a></p>
+
+    <h1>Points Indexing Instruction</h1>
+    <ul style="line-height: 1.5">
+        <li>Normal Mode
+            <ul>
+                <li>On blank:
+                    <ul>
+                        <li>Left click to insert</li>
+                    </ul>
+                </li>
+                <li>Hovering on a point:
+                    <ul>
+                        <li>Left click to drag</li>
+                        <li>Right click to delete</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li>Search Mode:
+            <ul>
+                <li>Overlap</li>
+                <li>Within</li>
+                <li>Nearest</li>
+            </ul>
+        </li>
+    </ul>
+
+
+    Mouse: <label id="x">0</label>, <label id="y">0</label>
+    <br/>
+    <p id="pts">pts: </p>
+    <p id="bnds">bounds: </p>
+    <svg id="indexing"></svg>
+    <script data-main="pt-index.config" src="vendors/require.js"></script>
+</body>
+
+</html>
