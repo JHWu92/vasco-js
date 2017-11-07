@@ -1,0 +1,16 @@
+{
+    "eslintConfig": {
+        "rules": {
+            "no-console": 1,
+            "no-unused-vars": [1]
+        },
+    "globals": {
+        "define": true,
+        "console":true,
+        "require":true,
+        "requirejs":false,
+        "document" : true
+    }
+        
+    }
+}

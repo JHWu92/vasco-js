@@ -1,4 +1,5 @@
 define(['jquery'], function ($) {
+    'use strict';
     function SvgCircle(svg, id, pt, r) {
         this.svg = svg;
         this.id = id;
@@ -9,11 +10,11 @@ define(['jquery'], function ($) {
 
     var pro = SvgCircle.prototype;
     pro.setClass = function (cname) {
-        this.class = cname;
+        this.cname = cname;
     };
     pro.setColor = function (color) {
         this.color = color;
-    }
+    };
     pro.draw = function () {
         var c = $(document.createElementNS("http://www.w3.org/2000/svg", "circle"))
             .attr({
@@ -21,7 +22,7 @@ define(['jquery'], function ($) {
                 r: this.r,
                 id: this.id,
                 fill: this.color,
-                class: this.class
+                'class': this.cname
             })
             .css({
                 cursor: 'pointer'
