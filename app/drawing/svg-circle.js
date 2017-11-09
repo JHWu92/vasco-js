@@ -1,7 +1,9 @@
-define(['jquery'], function ($) {
+define(function () {
     'use strict';
+
+
     function SvgCircle(svg, id, pt, r) {
-        this.svg = svg;
+        this.svg = svg;  // d3 object
         this.id = id;
         this.pt = pt;
         this.r = r;
@@ -16,7 +18,7 @@ define(['jquery'], function ($) {
         this.color = color;
     };
     pro.draw = function () {
-        var c = $(document.createElementNS("http://www.w3.org/2000/svg", "circle"))
+        var c = this.svg.append("circle")
             .attr({
                 transform: 'translate' + this.pt.getXYStr(),
                 r: this.r,
@@ -24,20 +26,19 @@ define(['jquery'], function ($) {
                 fill: this.color,
                 'class': this.cname
             })
-            .css({
+            .style({
                 cursor: 'pointer'
             });
 
-        console.log(c);
-        this.svg.append(c);
+        //        console.log(c);
     };
 
     pro.moveTo = function (x, y) {
-        $('#' + this.id).attr('transform', 'translate(' + x + ',' + y + ')');
+        this.svg.select('#' + this.id).attr('transform', 'translate(' + x + ',' + y + ')');
     };
 
     pro.del = function () {
-        $('#' + this.id).remove();
+        this.svg.select('#' + this.id).remove();
     };
 
     return SvgCircle;

@@ -10,6 +10,8 @@ circle:hover {
 
 svg {
     border: 1px solid grey;
+    width: 600px;
+    height: 400px;
 }
 
 .idx-ln{
