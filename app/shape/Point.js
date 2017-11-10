@@ -1,4 +1,8 @@
+/*global define*/
+
 define(function () {
+    'use strict';
+    
     function Point(id, x, y) {
         this.id = id;
         this.x = x;
@@ -13,8 +17,8 @@ define(function () {
         return [this.x, this.y];
     };
     pro.getXYStr = function () {
-        return '(' + this.x + ', ' + this.y + ')'
-    }
+        return '(' + this.x + ', ' + this.y + ')';
+    };
     pro.toString = function () {
         return this.name + ' ' + this.id + ' ' + this.getXYStr();
     };
@@ -22,6 +26,10 @@ define(function () {
     pro.update = function (x, y) {
         this.x = x;
         this.y = y;
-    }
+    };
+
+    pro.equals = function (pt) {
+        return pt.x === this.x && pt.y === this.y;
+    };
     return Point;
 });
