@@ -11,20 +11,17 @@
 <body>
     <script src="../../../vendors/require.js"></script>
     <script>
-        require(['./KDNode', './KDTree', '../../shape/Point', './constant.js'], function(KDNode, KDTree, Point, cons) {
+        require(['./KDTree', '../../shape/Point', './constant.js', '../../constant'], function(KDTree, Point, cons,gCons) {
             var root = null,
                 pt1 = new Point(1,1),
                 pt2 = new Point(2,1),
                 pt3 = new Point(4,1),
                 ptNotSonRight = new Point(3,1),
                 ptNotSonLeft = new Point(0,1),
-                node1 = new KDNode(pt1),
-                node2 = new KDNode(pt2),
-                node3 = new KDNode(pt3);
+                node1 = new KDTree(pt1),
+                node2 = new KDTree(pt2),
+                node3 = new KDTree(pt3);
             
-//            root = KDTree.addKDNode(root, node1);
-//            root = KDTree.addKDNode(root, node2);
-//            root = KDTree.addKDNode(root, node3);
             root = node1;
             root.insert(pt2);
             root.insert(pt3);
@@ -43,7 +40,9 @@
             console.log('findFather of node2===root:', root.findFather(node2, null)===root);
             console.log('findFather of node3.pt===node2.pt:', root.findFather(node3, null).pt===node2.pt);
             
+            console.log(root.getPartitions(0,0,gCons.svgWidth,gCons.svgHeight));
             root.deleteByPt(pt1);
+            
             console.log(root.treeString());
         });
 
