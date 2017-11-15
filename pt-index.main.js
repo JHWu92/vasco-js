@@ -7,40 +7,46 @@ define(function (require) {
     var $ = require('jquery'),
         d3 = require('d3'),
         //        _ = require('underscore'),
+        
         constant = require('app/constant.js'),
+        
         Point = require('app/shape/Point'),
+        
         SvgCircle = require('app/drawing/svg-circle'),
-        //        SvgLn = require('app/drawing/svg-ln');
+        SvgLn = require('app/drawing/svg-ln'),
 
+        KDTree = require('app/indexing/point/KDTreeSvg'),
+        
         state = {
             m: [0, 0],
             autopid: 0,
             onId: '',
             onClass: '',
             etype: 0,
-            pts: {},
-        };
+            pts: {}
+        },
 
-    var svg = d3.select('#indexing')
-        .attr({
-            width: constant.svgWidth,
-            height: constant.svgHeight
-        })
-        .on({
-            mousemove: mousemove,
-            mousedown: mousedown,
-            mouseup: mouseup,
-            contextmenu: function () {
-                d3.event.preventDefault();
-            }
-        });
-    
+        svg = d3.select('#indexing')
+            .attr({
+                width: constant.svgWidth,
+                height: constant.svgHeight
+            })
+            .on({
+                mousemove: mousemove,
+                mousedown: mousedown,
+                mouseup: mouseup,
+                contextmenu: function () {
+                    d3.event.preventDefault();
+                }
+            });
+
     function mousemove() {
         var m = d3.mouse(this);
         m = [parseInt(m[0]), parseInt(m[1])];
         $('#x').text(m[0]);
         $('#y').text(m[1]);
         state.m = m;
+
     }
 
     function mousemoveOnPoint() {
@@ -48,6 +54,9 @@ define(function (require) {
         var x = state.m[0],
             y = state.m[1];
         state.pts[state.onId].moveTo(x, y);
+
+        KDTree.rebuild(state.pts, state.autopid);
+        $('#tree').text(KDTree.toString());
     }
 
     function mousedown() {
@@ -65,12 +74,12 @@ define(function (require) {
 
         // switch function based on Element
         switch (state.onClass) {
-        case 'point':
-            mousedownOnPoint();
-            break;
-        default:
-            // nothing change if down on anything else
-            break;
+            case 'point':
+                mousedownOnPoint();
+                break;
+            default:
+                // nothing change if down on anything else
+                break;
         }
     }
 
@@ -91,12 +100,12 @@ define(function (require) {
         //        console.log('mouseup', state.m, state.etype, ' target ', state.onId, state.onClass);
 
         switch (state.onClass) {
-        case 'point':
-            mouseupOnPoint();
-            break;
-        default:
-            mouseupOnChart();
-            break;
+            case 'point':
+                mouseupOnPoint();
+                break;
+            default:
+                mouseupOnChart();
+                break;
         }
 
         // reset state
@@ -122,13 +131,25 @@ define(function (require) {
         state.autopid += 1;
 
         // draw a circle on #chart
-        var sCir = new SvgCircle(svg, pid,
-            new Point(x, y), constant.pRadius);
+        var pt = new Point(x, y),
+            sCir = new SvgCircle(svg, pid,
+                pt, constant.pRadius);
         sCir.setClass('point');
         sCir.draw();
 
         // add point data to state
         state.pts[pid] = sCir;
+
+        // add point to KDTree
+        KDTree.insert(pt);        
+        // print tree
+        $('#tree').text(KDTree.toString());
+        
+        var partitions, svgLns=[];
+        partitions = KDTree.getPartitions(0,0, constant.svgWidth, constant.svgHeight);
+        svgLns = 
+        // print boundaries
+        $('#bnds').text(JSON.stringify(partitions));
     }
 
 });
