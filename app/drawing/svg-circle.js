@@ -35,6 +35,7 @@ define(function () {
 
     pro.moveTo = function (x, y) {
         this.svg.select('#' + this.id).attr('transform', 'translate(' + x + ',' + y + ')');
+        this.pt.update(x,y);
     };
 
     pro.del = function () {
