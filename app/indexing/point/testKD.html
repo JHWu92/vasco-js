@@ -1,0 +1,53 @@
+<!doctype html>
+
+<html>
+
+<head>
+    <title>Page Title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0">
+</head>
+
+<body>
+    <script src="../../../vendors/require.js"></script>
+    <script>
+        require(['./KDNode', './KDTree', '../../shape/Point', './constant.js'], function(KDNode, KDTree, Point, cons) {
+            var root = null,
+                pt1 = new Point(1,1),
+                pt2 = new Point(2,1),
+                pt3 = new Point(4,1),
+                ptNotSonRight = new Point(3,1),
+                ptNotSonLeft = new Point(0,1),
+                node1 = new KDNode(pt1),
+                node2 = new KDNode(pt2),
+                node3 = new KDNode(pt3);
+            
+//            root = KDTree.addKDNode(root, node1);
+//            root = KDTree.addKDNode(root, node2);
+//            root = KDTree.addKDNode(root, node3);
+            root = node1;
+            root.insert(pt2);
+            root.insert(pt3);
+            console.log(root.treeString());
+            console.log('Disc == x:', root.DISC===cons.xAttr);
+            console.log('nextDisc == y:', root.nextDisc()===cons.yAttr);
+//            console.log('sontype of node2 == cons.right: ', root.directSonType(node2)==cons.right);
+            console.log('sontype of node2.pt == cons.right: ', root.directSonTypeByPt(new Point(2,1))==cons.right);
+            console.log('no (3,1), ==null : ', root.directSonTypeByPt(new Point(3,1))===null);
+            console.log('right: ', root.leftOrRight(ptNotSonRight)==cons.right);
+            console.log('left: ', root.leftOrRight(ptNotSonLeft)==cons.left);
+            console.log('find (2,1): ', root.findNodeByPt(pt2).toString());
+            console.log('find (4,1): ', root.findNodeByPt(pt3).toString());
+            
+            console.log('findFather of root itself === null:', root.findFather(root, null)===null);
+            console.log('findFather of node2===root:', root.findFather(node2, null)===root);
+            console.log('findFather of node3.pt===node2.pt:', root.findFather(node3, null).pt===node2.pt);
+            
+            root.deleteByPt(pt1);
+            console.log(root.treeString());
+        });
+
+    </script>
+</body>
+
+</html>

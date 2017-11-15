@@ -123,7 +123,7 @@ define(function (require) {
 
         // draw a circle on #chart
         var sCir = new SvgCircle(svg, pid,
-            new Point(pid, x, y), constant.pRadius);
+            new Point(x, y), constant.pRadius);
         sCir.setClass('point');
         sCir.draw();
 

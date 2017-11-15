@@ -3,8 +3,7 @@
 define(function () {
     'use strict';
     
-    function Point(id, x, y) {
-        this.id = id;
+    function Point(x, y) {
         this.x = x;
         this.y = y;
     }
@@ -20,7 +19,7 @@ define(function () {
         return '(' + this.x + ', ' + this.y + ')';
     };
     pro.toString = function () {
-        return this.name + ' ' + this.id + ' ' + this.getXYStr();
+        return this.name + ' ' + this.getXYStr();
     };
 
     pro.update = function (x, y) {
