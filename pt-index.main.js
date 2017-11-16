@@ -85,10 +85,22 @@ define(function (require) {
     }
 
     function mousedownOnPoint() {
-        // change mousemove callback to drag the point
-        svg.on({
-            mousemove: mousemoveOnPoint
-        })
+        switch (state.etype) {
+            case 1: //left click
+                // change mousemove callback to drag the point
+                svg.on({
+                    mousemove: mousemoveOnPoint
+                });
+                break;
+            case 3: //right click
+                var temp =state.pts[state.onId];
+                KDTree.del(temp.pt);
+                temp.del();
+                delete state.pts[state.onId];
+                $('#tree').text(KDTree.toString());
+                drawPartition();
+
+        }
     }
 
 
@@ -116,37 +128,46 @@ define(function (require) {
     }
 
     function mouseupOnPoint() {
-        // reset mouse move
-        svg.on({
-            mousemove: mousemove
-        });
+        switch (state.etype) {
+            case 1: //left click
+                // reset mouse move
+                svg.on({
+                    mousemove: mousemove
+                });
+                break;
+        }
     }
 
     function mouseupOnChart() {
-        // get current mouse position
-        var x = state.m[0],
-            y = state.m[1];
+        
+        switch (state.etype) {
+            case 1: //left click
+                // get current mouse position
+                var x = state.m[0],
+                    y = state.m[1];
 
-        // set current pid and new pid count 
-        var pid = 'pid_' + state.autopid;
-        state.autopid += 1;
+                // set current pid and new pid count 
+                var pid = 'pid_' + state.autopid;
+                state.autopid += 1;
 
-        // draw a circle on #chart
-        var pt = new Point(x, y),
-            sCir = new SvgCircle(svg, pid,
-                pt, constant.pRadius);
-        sCir.setClass('point');
-        sCir.draw();
+                // draw a circle on #chart
+                var pt = new Point(x, y),
+                    sCir = new SvgCircle(svg, pid,
+                        pt, constant.pRadius);
+                sCir.setClass('point');
+                sCir.draw();
 
-        // add point data to state
-        state.pts[pid] = sCir;
+                // add point data to state
+                state.pts[pid] = sCir;
 
-        // add point to KDTree
-        KDTree.insert(pt);
-        // print tree
-        $('#tree').text(KDTree.toString());
+                // add point to KDTree
+                KDTree.insert(pt);
+                // print tree
+                $('#tree').text(KDTree.toString());
 
-        drawPartition();
+                drawPartition();
+                break;
+        }
 
     }
 
@@ -158,6 +179,9 @@ define(function (require) {
         var temp, partitions, svgPart;
         // get current partitions
         partitions = KDTree.getPartitions(0, 0, constant.svgWidth, constant.svgHeight);
+        if (partitions===null){
+            return;
+        }
         // draw partitions
         for (var i = 0; i < partitions.length; i++) {
             temp = partitions[i];

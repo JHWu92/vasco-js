@@ -35,11 +35,20 @@ define(function (require) {
         return null;
     }
 
+    function del(pt){
+        var notEmpty = tree.deleteByPt(pt);
+        // !notempty means the last point is deleted
+        if (!notEmpty){
+            tree = null;
+        }
+    }
+    
     return {
         insert: insert,
         toString: toString,
         rebuild: rebuild,
-        getPartitions: getPartitions
+        getPartitions: getPartitions,
+        del: del
     };
 
 

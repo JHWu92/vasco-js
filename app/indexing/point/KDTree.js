@@ -167,6 +167,7 @@ define(['./constant'], function (cons) {
     };
 
     pro.deleteByPt = function (pt) {
+        if (this.empty()){return false;}
         var rep, father, node;
         node = this.findNodeByPt(pt);
         rep = this.deleteHelperByNode(node);
@@ -178,6 +179,7 @@ define(['./constant'], function (cons) {
         } else {
             father.son[father.directSonType(node)] = rep;
         }
+        return true;
     };
 
     pro.deleteHelperByNode = function (node) {
