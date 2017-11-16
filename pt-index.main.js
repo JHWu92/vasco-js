@@ -38,7 +38,9 @@ define(function (require) {
             contextmenu: function () {
                 d3.event.preventDefault();
             }
-        });
+        }),
+        layerPartition = svg.append('g'),
+        layerPoint = svg.append('g');
 
     function mousemove() {
         var m = d3.mouse(this);
@@ -93,7 +95,7 @@ define(function (require) {
                 });
                 break;
             case 3: //right click
-                var temp =state.pts[state.onId];
+                var temp = state.pts[state.onId];
                 KDTree.del(temp.pt);
                 temp.del();
                 delete state.pts[state.onId];
@@ -107,7 +109,7 @@ define(function (require) {
     function mouseup() {
         // ignore if etype doesn't match, i.e. up on right key while pressing left key 
         var etype = event.which;
-        if (state.etype != etype) {
+        if (state.etype !== etype) {
             return;
         }
         //        console.log('mouseup', state.m, state.etype, ' target ', state.onId, state.onClass);
@@ -116,8 +118,10 @@ define(function (require) {
             case 'point':
                 mouseupOnPoint();
                 break;
-            default:
+            case 'chart':
                 mouseupOnChart();
+                break;
+            default:
                 break;
         }
 
@@ -139,7 +143,7 @@ define(function (require) {
     }
 
     function mouseupOnChart() {
-        
+
         switch (state.etype) {
             case 1: //left click
                 // get current mouse position
@@ -152,7 +156,7 @@ define(function (require) {
 
                 // draw a circle on #chart
                 var pt = new Point(x, y),
-                    sCir = new SvgCircle(svg, pid,
+                    sCir = new SvgCircle(layerPoint, pid,
                         pt, constant.pRadius);
                 sCir.setClass('point');
                 sCir.draw();
@@ -173,19 +177,19 @@ define(function (require) {
 
     function drawPartition() {
         // clear existing partition lines
-        svg.selectAll('.partition').remove();
+        layerPartition.selectAll('*').remove();
 
         // redraw all partitions
         var temp, partitions, svgPart;
         // get current partitions
         partitions = KDTree.getPartitions(0, 0, constant.svgWidth, constant.svgHeight);
-        if (partitions===null){
+        if (partitions === null) {
             return;
         }
         // draw partitions
         for (var i = 0; i < partitions.length; i++) {
             temp = partitions[i];
-            svgPart = new SvgLn(svg, 'partition_' + i,
+            svgPart = new SvgLn(layerPartition, 'partition_' + i,
                 new Point(temp[0], temp[1]),
                 new Point(temp[2], temp[3]));
             svgPart.setClass('partition');
