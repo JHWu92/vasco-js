@@ -54,8 +54,8 @@ define(['./constant'], function (cons) {
         }
     };
 
-    /* KDCompare in java applet*/
-    pro.leftOrRightByPt = function (pt) {
+    /* compare a point to this node to see if the the point is on the left or right of this node */
+    pro.KDCompare = function (pt) {
         if (this.DISC === cons.xAttr) {
             return (pt.x < this.pt.x) ? cons.left : cons.right;
         } else {
@@ -68,7 +68,7 @@ define(['./constant'], function (cons) {
         var node = this,
             sonType = null;
         while (node !== null && !(node.pt.equals(pt))) {
-            sonType = node.leftOrRightByPt(pt);
+            sonType = node.KDCompare(pt);
             node = node.son[sonType];
         }
         return node;
@@ -84,7 +84,7 @@ define(['./constant'], function (cons) {
         if (node.pt.equals(this.pt)) {
             return father;
         }
-        var son = this.son[this.leftOrRightByPt(node.pt)];
+        var son = this.son[this.KDCompare(node.pt)];
         if (son===null){return null;}
         return son.findFather(node, this);
 
@@ -154,7 +154,7 @@ define(['./constant'], function (cons) {
         // newNode equals curNode means duplicate, don't add new node
         while (curNode !== null && !pt.equals(curNode.pt)) {
             father = curNode;
-            sontype = father.leftOrRightByPt(pt);
+            sontype = father.KDCompare(pt);
             curNode = father.son[sontype];
         }
 
