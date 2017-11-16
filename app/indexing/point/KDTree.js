@@ -55,7 +55,7 @@ define(['./constant'], function (cons) {
     };
 
     /* KDCompare in java applet*/
-    pro.leftOrRight = function (pt) {
+    pro.leftOrRightByPt = function (pt) {
         if (this.DISC === cons.xAttr) {
             return (pt.x < this.pt.x) ? cons.left : cons.right;
         } else {
@@ -68,7 +68,7 @@ define(['./constant'], function (cons) {
         var node = this,
             sonType = null;
         while (node !== null && !(node.pt.equals(pt))) {
-            sonType = node.leftOrRight(pt);
+            sonType = node.leftOrRightByPt(pt);
             node = node.son[sonType];
         }
         return node;
@@ -81,11 +81,11 @@ define(['./constant'], function (cons) {
      * this: current node, if node===this, return father.
      */
     pro.findFather = function (node, father) {
-        //        console.log(node.toString(), this.toString());
         if (node.pt.equals(this.pt)) {
             return father;
         }
-        var son = this.son[this.leftOrRight(node)];
+        var son = this.son[this.leftOrRightByPt(node.pt)];
+        if (son===null){return null;}
         return son.findFather(node, this);
 
 
@@ -154,7 +154,7 @@ define(['./constant'], function (cons) {
         // newNode equals curNode means duplicate, don't add new node
         while (curNode !== null && !pt.equals(curNode.pt)) {
             father = curNode;
-            sontype = father.leftOrRight(pt);
+            sontype = father.leftOrRightByPt(pt);
             curNode = father.son[sontype];
         }
 
@@ -172,6 +172,7 @@ define(['./constant'], function (cons) {
         node = this.findNodeByPt(pt);
         rep = this.deleteHelperByNode(node);
         father = this.findFather(node, null);
+ 
         if (father === null) { // the node to be replaced is the root itself
             this.pt = rep.pt;
             this.DISC = rep.DISC;
