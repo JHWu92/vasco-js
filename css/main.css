@@ -2,7 +2,7 @@ circle:hover {
     fill: #2ca25f;
 }
 
-.bound {
+.partition {
     stroke: steelblue;
     stroke-width: 1px;
     /*stroke-linecap: round;*/

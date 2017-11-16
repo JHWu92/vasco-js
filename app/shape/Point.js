@@ -12,6 +12,12 @@ define(function () {
     // augment Point
     var pro = Point.prototype;
     pro.name = 'Point';
+    pro.getX = function(){
+        return this.x;
+    };
+    pro.getY = function(){
+        return this.y;
+    };
     pro.getXY = function () {
         return [this.x, this.y];
     };

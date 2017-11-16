@@ -7,16 +7,16 @@ define(function (require) {
     var $ = require('jquery'),
         d3 = require('d3'),
         //        _ = require('underscore'),
-        
+
         constant = require('app/constant.js'),
-        
+
         Point = require('app/shape/Point'),
-        
+
         SvgCircle = require('app/drawing/svg-circle'),
         SvgLn = require('app/drawing/svg-ln'),
 
         KDTree = require('app/indexing/point/KDTreeSvg'),
-        
+
         state = {
             m: [0, 0],
             autopid: 0,
@@ -27,18 +27,18 @@ define(function (require) {
         },
 
         svg = d3.select('#indexing')
-            .attr({
-                width: constant.svgWidth,
-                height: constant.svgHeight
-            })
-            .on({
-                mousemove: mousemove,
-                mousedown: mousedown,
-                mouseup: mouseup,
-                contextmenu: function () {
-                    d3.event.preventDefault();
-                }
-            });
+        .attr({
+            width: constant.svgWidth,
+            height: constant.svgHeight
+        })
+        .on({
+            mousemove: mousemove,
+            mousedown: mousedown,
+            mouseup: mouseup,
+            contextmenu: function () {
+                d3.event.preventDefault();
+            }
+        });
 
     function mousemove() {
         var m = d3.mouse(this);
@@ -57,6 +57,7 @@ define(function (require) {
 
         KDTree.rebuild(state.pts, state.autopid);
         $('#tree').text(KDTree.toString());
+        drawPartition();
     }
 
     function mousedown() {
@@ -141,15 +142,31 @@ define(function (require) {
         state.pts[pid] = sCir;
 
         // add point to KDTree
-        KDTree.insert(pt);        
+        KDTree.insert(pt);
         // print tree
         $('#tree').text(KDTree.toString());
-        
-        var partitions, svgLns=[];
-        partitions = KDTree.getPartitions(0,0, constant.svgWidth, constant.svgHeight);
-        svgLns = 
-        // print boundaries
-        $('#bnds').text(JSON.stringify(partitions));
+
+        drawPartition();
+
+    }
+
+    function drawPartition() {
+        // clear existing partition lines
+        svg.selectAll('.partition').remove();
+
+        // redraw all partitions
+        var temp, partitions, svgPart;
+        // get current partitions
+        partitions = KDTree.getPartitions(0, 0, constant.svgWidth, constant.svgHeight);
+        // draw partitions
+        for (var i = 0; i < partitions.length; i++) {
+            temp = partitions[i];
+            svgPart = new SvgLn(svg, 'partition_' + i,
+                new Point(temp[0], temp[1]),
+                new Point(temp[2], temp[3]));
+            svgPart.setClass('partition');
+            svgPart.draw();
+        }
     }
 
 });

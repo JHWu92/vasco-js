@@ -224,7 +224,7 @@ define(['./constant'], function (cons) {
 
     pro.getPartitions = function (minX, minY, maxX, maxY) {
         var partition = [];
-        console.log(minX, minY, maxX, maxY);
+        //        console.log(minX, minY, maxX, maxY);
         if (this.empty()) {
             return partition;
         }
@@ -233,12 +233,12 @@ define(['./constant'], function (cons) {
             if (!this.noLeftSon()) {
                 Array.prototype.push.apply(partition,
                     this.son[cons.left].getPartitions(minX, minY, this.pt.x, maxY)
-                );
+                    );
             }
             if (!this.noRightSon()) {
                 Array.prototype.push.apply(partition,
                     this.son[cons.right].getPartitions(this.pt.x, minY, maxX, maxY)
-                );
+                    );
             }
 
         } else {
