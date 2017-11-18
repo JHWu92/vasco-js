@@ -1,0 +1,44 @@
+<!doctype html>
+
+<html>
+
+<head>
+    <title>Page Title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0">
+</head>
+
+<body>
+    <script src="../../../vendors/require.js"></script>
+    <script>
+        requirejs(['./PointQuadTree', '../../shape/Point'], function(PQTree, Point) {
+            var
+                pt1 = new Point(1, 1),
+                pt2 = new Point(4, 4),
+                pt3 = new Point(3, 3),
+                ptRoot = new Point(2, 2),
+                root = new PQTree(ptRoot);
+
+            root.insert(pt1);
+            root.insert(pt2);
+            root.insert(pt3);
+            console.log(root.treeString());
+
+            if (root.numDirectSons() !== 2) {
+                console.log('numDirectSons!=2');
+            }
+            if (!root.findFather(pt1).pt.equals(root.pt)) {
+                console.log('pt1 father!=root');
+            }
+
+            if (!root.findFather(pt3).pt.equals(pt2)) {
+                console.log('pt3 father!=pt2');
+            }
+
+
+
+        });
+    </script>
+</body>
+
+</html>
