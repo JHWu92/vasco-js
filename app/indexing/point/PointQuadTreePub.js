@@ -15,13 +15,16 @@ define(function (require) {
     }
 
     function del(pt) {
-        var notEmpty = tree.deleteByPt(pt);
-        // !notempty means the last point is deleted
-        if (!notEmpty) {
+        var res = tree.deleteByPt(pt);
+        // res.empty===true means the last point is deleted
+        if (res.empty) {
             tree = null;
         }
+        return res.deleted;
+        
     }
 
+    // TODO better rebuild logic
     function rebuild(svgPts, autopid) {
         tree = null;
         var i;
@@ -30,7 +33,12 @@ define(function (require) {
         }
     }
 
-    function getPartitions(minX, minY, maxX, maxY) {}
+    function getPartitions(minX, minY, maxX, maxY) {
+        if (tree !== null) {
+            return tree.getPartitions(minX, minY, maxX, maxY);
+        }
+        return null;
+    }
 
     function toString() {
         if (tree === null) return '';

@@ -15,7 +15,7 @@ define(function (require) {
         SvgCircle = require('app/drawing/svg-circle'),
         SvgLn = require('app/drawing/svg-ln'),
 
-        KDTree = require('app/indexing/point/KDTreeSvg'),
+        Tree = require('app/indexing/point/PointQuadTreePub'),
 
         state = {
             m: [0, 0],
@@ -57,8 +57,8 @@ define(function (require) {
             y = state.m[1];
         state.pts[state.onId].moveTo(x, y);
 
-        KDTree.rebuild(state.pts, state.autopid);
-        $('#tree').text(KDTree.toString());
+        Tree.rebuild(state.pts, state.autopid);
+        $('#tree').text(Tree.toString());
         drawPartition();
     }
 
@@ -96,11 +96,16 @@ define(function (require) {
                 break;
             case 3: //right click
                 var temp = state.pts[state.onId];
-                KDTree.del(temp.pt);
-                temp.del();
-                delete state.pts[state.onId];
-                $('#tree').text(KDTree.toString());
-                drawPartition();
+                console.log('del pt ', temp.pt.toString());
+                if (Tree.del(temp.pt)) {
+
+                    temp.del();
+                    delete state.pts[state.onId];
+                    $('#tree').text(Tree.toString());
+                    drawPartition();
+                }else{
+                    console.log('deleted===false');
+                }
 
         }
     }
@@ -164,10 +169,10 @@ define(function (require) {
                 // add point data to state
                 state.pts[pid] = sCir;
 
-                // add point to KDTree
-                KDTree.insert(pt);
+                // add point to Tree
+                Tree.insert(pt);
                 // print tree
-                $('#tree').text(KDTree.toString());
+                $('#tree').text(Tree.toString());
 
                 drawPartition();
                 break;
@@ -182,7 +187,7 @@ define(function (require) {
         // redraw all partitions
         var temp, partitions, svgPart;
         // get current partitions
-        partitions = KDTree.getPartitions(0, 0, constant.svgWidth, constant.svgHeight);
+        partitions = Tree.getPartitions(0, 0, constant.svgWidth, constant.svgHeight);
         if (partitions === null) {
             return;
         }
