@@ -85,7 +85,9 @@ define(['./constant'], function (cons) {
             return father;
         }
         var son = this.son[this.KDCompare(node.pt)];
-        if (son===null){return null;}
+        if (son === null) {
+            return null;
+        }
         return son.findFather(node, this);
 
 
@@ -164,15 +166,29 @@ define(['./constant'], function (cons) {
             father.son[sontype] = newNode;
 
         }
+        // always true: successfully inserted.
+        return true;
     };
 
     pro.deleteByPt = function (pt) {
-        if (this.empty()){return false;}
+        if (this.empty()) {
+            return {
+                deleted: true,
+                empty: true
+            };
+        }
         var rep, father, node;
         node = this.findNodeByPt(pt);
+        // can't find corresponding node, nothing is deleted
+        if (node === null) {
+            return {
+                deleted: false,
+                empty: false
+            };
+        }
         rep = this.deleteHelperByNode(node);
         father = this.findFather(node, null);
- 
+
         if (father === null) { // the node to be replaced is the root itself
             this.pt = rep.pt;
             this.DISC = rep.DISC;
@@ -180,7 +196,10 @@ define(['./constant'], function (cons) {
         } else {
             father.son[father.directSonType(node)] = rep;
         }
-        return true;
+        return {
+            deleted: true,
+            empty: true
+        };
     };
 
     pro.deleteHelperByNode = function (node) {
@@ -236,12 +255,12 @@ define(['./constant'], function (cons) {
             if (!this.noLeftSon()) {
                 Array.prototype.push.apply(partition,
                     this.son[cons.left].getPartitions(minX, minY, this.pt.x, maxY)
-                    );
+                );
             }
             if (!this.noRightSon()) {
                 Array.prototype.push.apply(partition,
                     this.son[cons.right].getPartitions(this.pt.x, minY, maxX, maxY)
-                    );
+                );
             }
 
         } else {
@@ -257,6 +276,8 @@ define(['./constant'], function (cons) {
         return partition;
 
     };
+
+    /*deprecated*/
     pro.getBoundaryAsObj = function (minX, minY, maxX, maxY) {
         var bnd = {};
         if (this.empty()) {

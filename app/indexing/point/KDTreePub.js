@@ -3,8 +3,7 @@
 define(function (require) {
     'use strict';
 
-    var cons = require('./constant'),
-        KDTree = require('./KDTree'),
+    var KDTree = require('./KDTree'),
         tree = null;
 
     function insert(pt) {
@@ -12,14 +11,23 @@ define(function (require) {
             tree = new KDTree(pt);
             return true;
         }
-        tree.insert(pt);
+        return tree.insert(pt);
     }
-    
-    function rebuild(svgPts, autopid){
+
+    function del(pt) {
+        var res = tree.deleteByPt(pt);
+        // res.empty===true means the last point is deleted
+        if (res.empty) {
+            tree = null;
+        }
+        return res.deleted;
+    }
+
+    function rebuild(svgPts, autopid) {
         tree = null;
-        for(var i = 0; i<autopid; i++){
-            if(svgPts.hasOwnProperty('pid_'+i))
-                insert(svgPts['pid_'+i].pt);
+        var i;
+        for (i = 0; i < autopid; i = i + 1) {
+            if (svgPts.hasOwnProperty('pid_' + i)) insert(svgPts['pid_' + i].pt);
         }
     }
 
@@ -27,28 +35,26 @@ define(function (require) {
         if (tree === null) return '';
         return tree.treeString();
     }
-    
-    function getPartitions(minX, minY, maxX, maxY){
-        if (tree !== null){
+
+    function getName() {
+        return 'K-D Tree';
+    }
+
+    function getPartitions(minX, minY, maxX, maxY) {
+        if (tree !== null) {
             return tree.getPartitions(minX, minY, maxX, maxY);
         }
         return null;
     }
 
-    function del(pt){
-        var notEmpty = tree.deleteByPt(pt);
-        // !notempty means the last point is deleted
-        if (!notEmpty){
-            tree = null;
-        }
-    }
-    
+
     return {
         insert: insert,
         toString: toString,
         rebuild: rebuild,
         getPartitions: getPartitions,
-        del: del
+        del: del,
+        getName: getName
     };
 
 

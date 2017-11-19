@@ -31,10 +31,11 @@
 //            console.log('sontype of node2 == cons.right: ', root.directSonType(node2)==cons.right);
             console.log('sontype of node2.pt == cons.right: ', root.directSonTypeByPt(new Point(2,1))==cons.right);
             console.log('no (3,1), ==null : ', root.directSonTypeByPt(new Point(3,1))===null);
-            console.log('right: ', root.leftOrRight(ptNotSonRight)==cons.right);
-            console.log('left: ', root.leftOrRight(ptNotSonLeft)==cons.left);
+            console.log('right: ', root.KDCompare(ptNotSonRight)==cons.right);
+            console.log('left: ', root.KDCompare(ptNotSonLeft)==cons.left);
             console.log('find (2,1): ', root.findNodeByPt(pt2).toString());
             console.log('find (4,1): ', root.findNodeByPt(pt3).toString());
+            console.log('find (100,100): ', root.findNodeByPt(new Point(100,100)));
             
             console.log('findFather of root itself === null:', root.findFather(root, null)===null);
             console.log('findFather of node2===root:', root.findFather(node2, null)===root);
