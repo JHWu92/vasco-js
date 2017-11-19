@@ -1,22 +1,29 @@
 /*global define, console, event*/
 /*jslint nomen: true*/
 
-define(function (require) {
+define(function (require, exports, module) {
     'use strict';
-
+    // vendor scripts
     var $ = require('jquery'),
         d3 = require('d3'),
         //        _ = require('underscore'),
 
+        // app scripts
+        utils = require('app/utils'),
         constant = require('app/constant.js'),
 
+        // data structure
         Point = require('app/shape/Point'),
-
         SvgCircle = require('app/drawing/svg-circle'),
         SvgLn = require('app/drawing/svg-ln'),
+        Trees = {
+            PointQuadTree: require('app/indexing/point/PointQuadTreePub'),
+            KDTree: require('app/indexing/point/KDTreePub')
+        },
 
-        Tree = require('app/indexing/point/PointQuadTreePub'),
-
+        treeType = utils.getParameterByName('type'),
+        Tree,
+        // current drawing state
         state = {
             m: [0, 0],
             autopid: 0,
@@ -26,6 +33,7 @@ define(function (require) {
             pts: {}
         },
 
+        // chart
         svg = d3.select('#indexing')
         .attr({
             width: constant.svgWidth,
@@ -41,6 +49,42 @@ define(function (require) {
         }),
         layerPartition = svg.append('g'),
         layerPoint = svg.append('g');
+
+    // output supported tree type
+    for (var type in Trees) {
+        $('#supType').append('<a href="?type=' + type + '">' + type + '</a>, ');
+    }
+    // set up tree type
+    treeType = (typeof treeType === 'undefined' || !Trees.hasOwnProperty(treeType)) ? 'PointQuadTree' : treeType;
+    Tree = Trees[treeType];
+    $('#treeType').text(treeType);
+
+    function drawPartition() {
+        // clear existing partition lines
+        layerPartition.selectAll('*').remove();
+
+        // redraw all partitions
+        var temp, partitions, svgPart;
+        // get current partitions
+        partitions = Tree.getPartitions(0, 0, constant.svgWidth, constant.svgHeight);
+        if (partitions === null) {
+            return;
+        }
+        // draw partitions
+        for (var i = 0; i < partitions.length; i++) {
+            temp = partitions[i];
+            svgPart = new SvgLn(layerPartition, 'partition_' + i,
+                new Point(temp[0], temp[1]),
+                new Point(temp[2], temp[3]));
+            svgPart.setClass('partition');
+            svgPart.draw();
+        }
+    }
+
+
+    //------------------------------------------------
+    // Event handlers
+    //------------------------------------------------
 
     function mousemove() {
         var m = d3.mouse(this);
@@ -96,14 +140,14 @@ define(function (require) {
                 break;
             case 3: //right click
                 var temp = state.pts[state.onId];
-                console.log('del pt ', temp.pt.toString());
+                //                console.log('del pt ', temp.pt.toString());
                 if (Tree.del(temp.pt)) {
 
                     temp.del();
                     delete state.pts[state.onId];
                     $('#tree').text(Tree.toString());
                     drawPartition();
-                }else{
+                } else {
                     console.log('deleted===false');
                 }
 
@@ -178,28 +222,6 @@ define(function (require) {
                 break;
         }
 
-    }
-
-    function drawPartition() {
-        // clear existing partition lines
-        layerPartition.selectAll('*').remove();
-
-        // redraw all partitions
-        var temp, partitions, svgPart;
-        // get current partitions
-        partitions = Tree.getPartitions(0, 0, constant.svgWidth, constant.svgHeight);
-        if (partitions === null) {
-            return;
-        }
-        // draw partitions
-        for (var i = 0; i < partitions.length; i++) {
-            temp = partitions[i];
-            svgPart = new SvgLn(layerPartition, 'partition_' + i,
-                new Point(temp[0], temp[1]),
-                new Point(temp[2], temp[3]));
-            svgPart.setClass('partition');
-            svgPart.draw();
-        }
     }
 
 });

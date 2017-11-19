@@ -1,5 +1,5 @@
 /*global requirejs, console*/
-requirejs(['./common'], function (common) {
+requirejs(['./common.config'], function (common) {
     
     'use strict';
     console.log('loading pt-index.config');

@@ -180,10 +180,10 @@ define(['./constant', './quadOP', './../../shape/Point'], function (cons, qOP, P
                 }
             }
             // if node !==null
-//            console.log('findCandidate', node.toString());
+            //            console.log('findCandidate', node.toString());
             while (node.son[qOP.OpQuad(quadrant)] !== null) {
                 node = node.son[qOP.OpQuad(quadrant)];
-//                console.log('findCandidate', node.toString());
+                //                console.log('findCandidate', node.toString());
             }
             return node.pt;
         }
@@ -200,10 +200,10 @@ define(['./constant', './quadOP', './../../shape/Point'], function (cons, qOP, P
 
             // if son[i] == null, res is always +inf.
             res = Math.abs(candidate.x - this.pt.x) + Math.abs(candidate.y - this.pt.y);
-            console.log('findBest on quadrant', i, candidate, res);
+            //            console.log('findBest on quadrant', i, candidate, res);
             // if all sons are null, bestQuad = -1
             if (res < min) {
-                console.log('switch from', [min, bestQuad], 'to', [res, i]);
+                //                console.log('switch from', [min, bestQuad], 'to', [res, i]);
                 min = res;
                 bestQuad = i;
                 bestCand = candidate;
@@ -337,7 +337,7 @@ define(['./constant', './quadOP', './../../shape/Point'], function (cons, qOP, P
             bestQ = foundBest.bestQ;
             //            candidate = ptNode.son[bestQ];  // VASCOapplet
             candidate = ptNode.findNodeByPt(foundBest.candPt);
-            console.log('del->findBest on', ptNode.toString(), 'get bestQ=', bestQ, 'candidate=', candidate.toString());
+            //            console.log('del->findBest on', ptNode.toString(), 'get bestQ=', bestQ, 'candidate=', candidate.toString());
             // the point of ptNode has changed
             // --> delete pt, move the coordinate to candidates
             ptNode.pt = candidate.pt;
