@@ -17,7 +17,7 @@ define(['./constant'], function (cons) {
 
 
     // ------------------------
-    // print info about KDTree
+    // print info about Tree
     // ------------------------
 
     pro.toString = function () {

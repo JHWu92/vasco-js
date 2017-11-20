@@ -49,7 +49,9 @@ define(function (require) {
             PointQuadTree: require('app/indexing/point/PointQuadTreePub'),
             KDTree: require('app/indexing/point/KDTreePub'),
             PRbucket: require('app/indexing/point/PRbucketPub'),
-            PR: require('app/indexing/point/PRPub')
+            PR: require('app/indexing/point/PRPub'),
+            PRkdBucket: require('app/indexing/point/PRkdBucketPub'),
+            PRkd: require('app/indexing/point/PRkdPub')
         },
         treeType = utils.getParameterByName('type'),
         Tree;

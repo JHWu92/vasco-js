@@ -13,7 +13,7 @@ define(function (require) {
 
     function init() {
         tree = null;
-        maxDecomp = $('#maxDecomp').val();
+        maxDecomp = parseInt($('#maxDecomp').val());
     }
 
     function toString() {

@@ -3,7 +3,7 @@
 define(function (require) {
     'use strict';
 
-    var PRbucket = require('./PRbucket'),
+    var PRkdBucket = require('./PRkdBucket'),
         cons = require('./constant'),
         gCons = require('app/constant'),
         $ = require('jquery'),
@@ -24,12 +24,12 @@ define(function (require) {
         return tree.treeString();
     }
 
-    function orderDependent() {
-        return 'order independent';
+    function getName() {
+        return 'Bucket PR k-d Tree';
     }
 
-    function getName() {
-        return 'Bucket PR Quadtree';
+    function orderDependent() {
+        return 'order independent'
     }
 
     function options() {
@@ -39,8 +39,8 @@ define(function (require) {
     }
 
     function del(pt) {
-        var res = tree.deleteByPt(pt, gCons.svgWidth, gCons.svgHeight);
-        // console.log('delete', pt.toString(), 'res=', res);
+        var res = tree.deleteByPt(pt, true, gCons.svgWidth, gCons.svgHeight);
+         console.log('delete', pt.toString(), 'res=', res);
         if (res.empty) {
             tree = null;
         }
@@ -49,24 +49,23 @@ define(function (require) {
 
     function insert(pt) {
         if (tree === null) {
-            tree = new PRbucket(cons.black, gCons.svgWidth / 2, gCons.svgHeight / 2, maxBucketSize);
+            tree = new PRkdBucket(cons.white, gCons.svgWidth / 2, gCons.svgHeight / 2, maxBucketSize);
         }
-        var ok = [true];
-        tree.insert(pt, gCons.svgWidth, gCons.svgHeight, maxDecomp, ok);
+        var ok = tree.insert(pt, true, gCons.svgWidth, gCons.svgHeight, maxDecomp);
+        console.log(tree.toString(), ok);
         // console.log('insert res', ok[0]);
-        if (ok[0] === false) {
+        if (ok === false) {
             del(pt);
         }
-        return ok[0];
+        return ok;
     }
-
 
     function getPartitions(minX, minY, maxX, maxY) {
         var width = maxX - minX,
             height = maxY - minY;
 
         if (tree !== null) {
-            return tree.getPartitions(minX, minY, width, height);
+            return tree.getPartitions(true, minX, minY, width, height);
         }
         return null;
     }
