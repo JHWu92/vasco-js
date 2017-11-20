@@ -6,6 +6,25 @@ define(function (require) {
     var PQTree = require('./PointQuadTree'),
         tree = null;
 
+    function init() {}
+
+    function options() {}
+
+    function toString() {
+        if (tree === null) {
+            return '';
+        }
+        return tree.treeString();
+    }
+
+    function orderDependent() {
+        return 'order dependent';
+    }
+
+    function getName() {
+        return 'Point QuadTree';
+    }
+
     function insert(pt) {
         if (tree === null) {
             tree = new PQTree(pt);
@@ -21,16 +40,7 @@ define(function (require) {
             tree = null;
         }
         return res.deleted;
-        
-    }
 
-    // TODO better rebuild logic
-    function rebuild(svgPts, autopid) {
-        tree = null;
-        var i;
-        for (i = 0; i < autopid; i = i + 1) {
-            if (svgPts.hasOwnProperty('pid_' + i)) insert(svgPts['pid_' + i].pt);
-        }
     }
 
     function getPartitions(minX, minY, maxX, maxY) {
@@ -40,22 +50,30 @@ define(function (require) {
         return null;
     }
 
-    function toString() {
-        if (tree === null) return '';
-        return tree.treeString();
+    // TODO better rebuild logic
+    function rebuild(svgPts, autopid) {
+        tree = null;
+        var i;
+        for (i = 0; i < autopid; i = i + 1) {
+            if (svgPts.hasOwnProperty('pid_' + i)) {
+                insert(svgPts['pid_' + i].pt);
+            }
+        }
+        return {
+            succeed: true
+        };
     }
 
-    function getName() {
-        return 'Point QuadTree';
-    }
-    
     return {
+        init: init,
+        toString: toString,
+        getName: getName,
+        orderDependent: orderDependent,
+        options: options,
         insert: insert,
         del: del,
-        rebuild: rebuild,
         getPartitions: getPartitions,
-        toString: toString,
-        getName: getName   
-    }
-    
+        rebuild: rebuild
+    };
+
 });

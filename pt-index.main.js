@@ -1,7 +1,7 @@
 /*global define, console, event*/
 /*jslint nomen: true*/
 
-define(function (require, exports, module) {
+define(function (require) {
     'use strict';
     // vendor scripts
     var $ = require('jquery'),
@@ -16,14 +16,8 @@ define(function (require, exports, module) {
         Point = require('app/shape/Point'),
         SvgCircle = require('app/drawing/svg-circle'),
         SvgLn = require('app/drawing/svg-ln'),
-        Trees = {
-            PointQuadTree: require('app/indexing/point/PointQuadTreePub'),
-            KDTree: require('app/indexing/point/KDTreePub')
-        },
 
-        treeType = utils.getParameterByName('type'),
-        Tree,
-        // current drawing state
+        // data state
         state = {
             m: [0, 0],
             autopid: 0,
@@ -48,16 +42,48 @@ define(function (require, exports, module) {
             }
         }),
         layerPartition = svg.append('g'),
-        layerPoint = svg.append('g');
+        layerPoint = svg.append('g'),
+
+        // Tree structure
+        Trees = {
+            PointQuadTree: require('app/indexing/point/PointQuadTreePub'),
+            KDTree: require('app/indexing/point/KDTreePub'),
+            PRbucket: require('app/indexing/point/PRbucketPub'),
+            PR: require('app/indexing/point/PRPub')
+        },
+        treeType = utils.getParameterByName('type'),
+        Tree;
 
     // output supported tree type
     for (var type in Trees) {
-        $('#supType').append('<a href="?type=' + type + '">' + type + '</a>, ');
+        $('#supType').append('<a href="?type=' + type + '">' + Trees[type].getName() + '</a>, ');
     }
-    // set up tree type
+
+    // init chosen Tree structure
     treeType = (typeof treeType === 'undefined' || !Trees.hasOwnProperty(treeType)) ? 'PointQuadTree' : treeType;
     Tree = Trees[treeType];
-    $('#treeType').text(treeType);
+    $('#treeType').text(Tree.getName() + ', ' + Tree.orderDependent());
+    $('#options').append(Tree.options());
+    $('#update').on('click', updateParam);
+    Tree.init();
+
+    // helper function
+    function updateParam() {
+        $('#status').text('update parameters');
+        Tree.init();
+
+        // current drawing state
+        state = {
+            m: [0, 0],
+            autopid: 0,
+            onId: '',
+            onClass: '',
+            etype: 0,
+            pts: {}
+        };
+        layerPartition.selectAll('*').remove();
+        layerPoint.selectAll('*').remove();
+    }
 
     function drawPartition() {
         // clear existing partition lines
@@ -81,7 +107,6 @@ define(function (require, exports, module) {
         }
     }
 
-
     //------------------------------------------------
     // Event handlers
     //------------------------------------------------
@@ -98,10 +123,18 @@ define(function (require, exports, module) {
     function mousemoveOnPoint() {
         mousemove.apply(this);
         var x = state.m[0],
-            y = state.m[1];
+            y = state.m[1],
+            res,
+            oldPt = new Point(state.pts[state.onId].pt.x, state.pts[state.onId].pt.y);
+
+        $('#status').text('');
         state.pts[state.onId].moveTo(x, y);
 
-        Tree.rebuild(state.pts, state.autopid);
+        res = Tree.rebuild(state.pts, state.autopid);
+        if (!res.succeed) {
+            state.pts[state.onId].moveTo(oldPt.x, oldPt.y);
+            $('#status').text("Can't move to this place, because " + res.msg);
+        }
         $('#tree').text(Tree.toString());
         drawPartition();
     }
@@ -148,7 +181,7 @@ define(function (require, exports, module) {
                     $('#tree').text(Tree.toString());
                     drawPartition();
                 } else {
-                    console.log('deleted===false');
+                    $('#status').text('delete failed');
                 }
 
         }
@@ -200,25 +233,30 @@ define(function (require, exports, module) {
                     y = state.m[1];
 
                 // set current pid and new pid count 
-                var pid = 'pid_' + state.autopid;
-                state.autopid += 1;
-
-                // draw a circle on #chart
-                var pt = new Point(x, y),
-                    sCir = new SvgCircle(layerPoint, pid,
-                        pt, constant.pRadius);
-                sCir.setClass('point');
-                sCir.draw();
-
-                // add point data to state
-                state.pts[pid] = sCir;
-
+                var pt = new Point(x, y);
                 // add point to Tree
-                Tree.insert(pt);
-                // print tree
-                $('#tree').text(Tree.toString());
+                if (Tree.insert(pt)) {
 
-                drawPartition();
+                    // draw a circle on #chart
+                    var pid = 'pid_' + state.autopid,
+                        sCir = new SvgCircle(layerPoint, pid,
+                            pt, constant.pRadius);
+                    sCir.setClass('point');
+                    sCir.draw();
+
+                    // add point data to state
+                    state.pts[pid] = sCir;
+                    // update pid for next point
+                    state.autopid += 1;
+
+                    // print tree
+                    $('#tree').text(Tree.toString());
+                    drawPartition();
+                    $('#status').text('insert successfully');
+                } else {
+                    $('#status').text('cannot insert here');
+                }
+
                 break;
         }
 

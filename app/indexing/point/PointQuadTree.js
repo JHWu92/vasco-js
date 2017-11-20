@@ -318,12 +318,14 @@ define(['./constant', './quadOP', './../../shape/Point'], function (cons, qOP, P
             if (father === null) {
                 // father === null, curNode is the root.
                 repNode = this.firstNotEmptySon();
+                // no replacement, the whole tree is empty
                 if (repNode === null) {
                     return {
                         deleted: true,
                         empty: true
                     };
                 }
+                // replace this node with repNode.
                 this.pt = repNode.pt;
                 this.son = repNode.son;
             } else {
