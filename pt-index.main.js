@@ -48,17 +48,20 @@ define(function (require) {
         Trees = {
             PointQuadTree: require('app/indexing/point/PointQuadTreePub'),
             KDTree: require('app/indexing/point/KDTreePub'),
-            PRbucket: require('app/indexing/point/PRbucketPub'),
             PR: require('app/indexing/point/PRPub'),
+            PRbucket: require('app/indexing/point/PRbucketPub'),
+            PRkd: require('app/indexing/point/PRkdPub'),
             PRkdBucket: require('app/indexing/point/PRkdBucketPub'),
-            PRkd: require('app/indexing/point/PRkdPub')
+            PMR: require('app/indexing/point/PMRPub'),
+            PMRkd: require('app/indexing/point/PMRkdPub')
         },
         treeType = utils.getParameterByName('type'),
         Tree;
 
     // output supported tree type
     for (var type in Trees) {
-        $('#supType').append('<a href="?type=' + type + '">' + Trees[type].getName() + '</a>, ');
+        
+        $('#supType').append('<li><a href="?type=' + type + '">' + Trees[type].getName() + '</a></li>');
     }
 
     // init chosen Tree structure

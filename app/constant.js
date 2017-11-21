@@ -4,8 +4,8 @@ define(function () {
     'use strict';
     var constant = {
         // svg#indexing.chart
-        svgWidth: 600,
-        svgHeight: 400,
+        svgWidth: 700,
+        svgHeight: 700,
         
         // radius for svg point 
         pRadius: 5

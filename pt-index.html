@@ -1,53 +1,108 @@
-<!doctype html>
-
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-    <title>Points Indexing</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Starter Template for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
     <link rel="stylesheet" href="css/main.css">
+
+    <!-- Custom styles for this template -->
+    <style type="text/css">
+        body {
+            padding-top: 5rem;
+            padding-left: 5rem;
+            padding-right: 5rem;
+        }
+
+    </style>
 </head>
 
+
 <body>
-    <p>Other data types: <a href="#">Lines</a>, <a href="#">Rectangulars</a>, <a href="#">Regions</a></p>
 
-    <h1>Points Indexing Instruction</h1>
-    <ul style="line-height: 1.5">
-        <li>Normal Mode
+    <div class="row">
+        <div class="col-xl-3">
+            <p>Other data types: <a href="#">Lines</a>, <a href="#">Rectangulars</a>, <a href="#">Regions</a></p>
+
+            <h3>Points Indexing Instruction</h3>
             <ul>
-                <li>On blank:
+                <li>Normal Mode
                     <ul>
-                        <li>Left click to insert</li>
+                        <li>On blank:
+                            <ul>
+                                <li>Left click to insert</li>
+                            </ul>
+                        </li>
+                        <li>Hovering on a point:
+                            <ul>
+                                <li>Left click to drag</li>
+                                <li>Right click to delete</li>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
-                <li>Hovering on a point:
+                <li>Search Mode:
                     <ul>
-                        <li>Left click to drag</li>
-                        <li>Right click to delete</li>
+                        <li>Overlap</li>
+                        <li>Within</li>
+                        <li>Nearest</li>
                     </ul>
                 </li>
             </ul>
-        </li>
-        <li>Search Mode:
-            <ul>
-                <li>Overlap</li>
-                <li>Within</li>
-                <li>Nearest</li>
-            </ul>
-        </li>
-    </ul>
+            <p><strong>Current data structure</strong>: <label id="treeType"></label></p>
+            <p><strong>Supported data structure</strong>:</p>
+            <ul id="supType"></ul>
+        </div>
+        <div class="col-xl-5"><svg id="indexing" class="chart" xmlns="http://www.w3.org/2000/svg"></svg></div>
+        <div class="col-xl-4">
+            <div id="options">
+                <p><strong>Indexing parameters:</strong></p>
+            </div>
+            <br>
+            <p><strong>Mouse</strong>: <label id="x">0</label>, <label id="y">0</label></p>
+            <p><strong>Status</strong>: <label id="status"></label></p>
+            <p><strong>Tree</strong>: <label id="tree"></label></p>
+        </div>
+    </div>
+    <!-- /.container -->
 
-    <p><strong>Supported data structure</strong>: <label id="supType"></label></p>
-    <p><strong>Current data structure</strong>: <label id="treeType"></label></p>
-    <div id="options"></div>
-    <p><strong>Mouse</strong>: <label id="x">0</label>, <label id="y">0</label></p>
-    <br/>
-    <svg id="indexing" class="chart" xmlns="http://www.w3.org/2000/svg"></svg>
-    <br>
-    <p><strong>Status</strong>: <label id="status"></label></p>
-    <p><strong>Tree</strong>: <label id="tree"></label></p>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
     <script data-main="pt-index.config" src="vendors/require.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script>
+        (function() {
+            'use strict'
+
+            if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
+                var msViewportStyle = document.createElement('style')
+                msViewportStyle.appendChild(
+                    document.createTextNode(
+                        '@-ms-viewport{width:auto!important}'
+                    )
+                )
+                document.head.appendChild(msViewportStyle)
+            }
+
+        }())
+
+    </script>
+
 </body>
 
 </html>
