@@ -3,7 +3,7 @@
 define(function (require) {
     'use strict';
 
-    var PRkdBucket = require('./PRkdBucket'),
+    var PMRkd = require('./PMRkd'),
         cons = require('./constant'),
         gCons = require('app/constant'),
         $ = require('jquery'),
@@ -25,11 +25,11 @@ define(function (require) {
     }
 
     function getName() {
-        return 'Bucket PR k-d Tree';
+        return 'PMR k-d Tree';
     }
 
     function orderDependent() {
-        return 'order independent'
+        return 'order dependent'
     }
 
     function options() {
@@ -49,7 +49,7 @@ define(function (require) {
 
     function insert(pt) {
         if (tree === null) {
-            tree = new PRkdBucket(cons.white, gCons.svgWidth / 2, gCons.svgHeight / 2, maxBucketSize);
+            tree = new PMRkd(cons.white, gCons.svgWidth / 2, gCons.svgHeight / 2, maxBucketSize);
         }
         var ok = tree.insert(pt, true, gCons.svgWidth, gCons.svgHeight, maxDecomp);
         // console.log(tree.toString(), ok);

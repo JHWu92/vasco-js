@@ -3,7 +3,7 @@
 define(function (require) {
     'use strict';
 
-    var PRkdBucket = require('./PRkdBucket'),
+    var PMRbucket = require('./PMR'),
         cons = require('./constant'),
         gCons = require('app/constant'),
         $ = require('jquery'),
@@ -24,12 +24,12 @@ define(function (require) {
         return tree.treeString();
     }
 
-    function getName() {
-        return 'Bucket PR k-d Tree';
+    function orderDependent() {
+        return 'order dependent';
     }
 
-    function orderDependent() {
-        return 'order independent'
+    function getName() {
+        return 'PMR Quadtree';
     }
 
     function options() {
@@ -39,7 +39,7 @@ define(function (require) {
     }
 
     function del(pt) {
-        var res = tree.deleteByPt(pt, true, gCons.svgWidth, gCons.svgHeight);
+        var res = tree.deleteByPt(pt, gCons.svgWidth, gCons.svgHeight);
         // console.log('delete', pt.toString(), 'res=', res);
         if (res.empty) {
             tree = null;
@@ -49,23 +49,24 @@ define(function (require) {
 
     function insert(pt) {
         if (tree === null) {
-            tree = new PRkdBucket(cons.white, gCons.svgWidth / 2, gCons.svgHeight / 2, maxBucketSize);
+            tree = new PMRbucket(cons.black, gCons.svgWidth / 2, gCons.svgHeight / 2, maxBucketSize);
         }
-        var ok = tree.insert(pt, true, gCons.svgWidth, gCons.svgHeight, maxDecomp);
-        // console.log(tree.toString(), ok);
+        var ok = [true];
+        tree.insert(pt, gCons.svgWidth, gCons.svgHeight, maxDecomp, ok);
         // console.log('insert res', ok[0]);
-        if (ok === false) {
+        if (ok[0] === false) {
             del(pt);
         }
-        return ok;
+        return ok[0];
     }
+
 
     function getPartitions(minX, minY, maxX, maxY) {
         var width = maxX - minX,
             height = maxY - minY;
 
         if (tree !== null) {
-            return tree.getPartitions(true, minX, minY, width, height);
+            return tree.getPartitions(minX, minY, width, height);
         }
         return null;
     }
