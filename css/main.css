@@ -14,12 +14,12 @@ svg {
     height: 700px;
 }
 
-.idx-ln{
+.line{
     stroke: black;
     stroke-width: 5px;
 }
 
-.idx-ln:hover{
+.line:hover{
     stroke: #2ca25f;
     stroke-width: 6px;
 }
