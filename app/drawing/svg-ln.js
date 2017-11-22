@@ -14,18 +14,23 @@ define(function () {
     }
 
     var pro = SvgLn.prototype;
+    
     pro.toString = function () {
         return 'Line from ' + this.pt1.toString() + ' to ' + this.pt2.toString();
     };
+    
     pro.setClass = function (cname) {
         this.cname = cname;
     };
+    
     pro.setColor = function (color) {
         this.color = color;
     };
+    
     pro.del = function () {
         this.svg.select('#' + this.id).remove();
     };
+    
     pro.draw = function () {
         this.svg.append("line")
             .attr({
