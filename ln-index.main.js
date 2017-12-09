@@ -7,12 +7,11 @@ define(function (require) {
         d3 = require('d3'),
 
         // app scripts
-        //        utils = require('app/utils'),
-        constant = require('app/constant.js'),
+        utils = require('app/utils'),
+        constant = require('app/constant'),
 
         // data structure
         Point = require('app/shape/Point'),
-        //        Line = require('app/shape/Line'),
         SvgLn = require('app/drawing/svg-ln'),
 
         // drawing state
@@ -41,10 +40,45 @@ define(function (require) {
             }
         }),
         layerPartition = svg.append('g'),
-        layerLines = svg.append('g');
+        layerLines = svg.append('g'),
 
+        // Tree structure
+        Trees = {
+            PM1Tree: require('app/indexing/line/PM1TreePub')
+        },
+        treeType = utils.getParameterByName('type'),
+        Tree;
 
+    for (var type in Trees) {
 
+        $('#supType').append('<li><a href="?type=' + type + '">' + Trees[type].getName() + '</a></li>');
+    }
+    // init chosen Tree structure
+    treeType = (typeof treeType === 'undefined' || !Trees.hasOwnProperty(treeType)) ? 'PointQuadTree' : treeType;
+    Tree = Trees[treeType];
+    $('#treeType').text(Tree.getName() + ', ' + Tree.orderDependent());
+    $('#options').append(Tree.options());
+    $('#update').on('click', updateParam);
+    Tree.init();
+    
+    
+    // helper function
+    function updateParam() {
+        $('#status').text('update parameters');
+        Tree.init();
+
+        // current drawing state
+        state = {
+            m: [0, 0],
+            autopid: 0,
+            onId: '',
+            onClass: '',
+            etype: 0,
+            pts: {}
+        };
+        layerPartition.selectAll('*').remove();
+        layerLines.selectAll('*').remove();
+    }
 
     function drawPartition() {
         // clear existing partition lines
@@ -72,7 +106,7 @@ define(function (require) {
         var nearPtExistLn, existLn, i,
             ln = state.lns[state.onId],
             nearPtCurLn = ln.nearEndPt(state.m[0], state.m[1]);
-        console.log('curLn', ln.toString(), 'curPt', nearPtCurLn);
+        // console.log('curLn', ln.toString(), 'curPt', nearPtCurLn);
         for (i in state.lns) {
             if (i === state.onId) {
                 continue;
@@ -81,7 +115,7 @@ define(function (require) {
             nearPtExistLn = existLn.nearEndPt(state.m[0], state.m[1]);
 
             if (nearPtExistLn !== 0) {
-                console.log('need to snap to ' + existLn.toString(), 'nearPtExistLn:', nearPtExistLn);
+                // console.log('need to snap to ' + existLn.toString(), 'nearPtExistLn:', nearPtExistLn);
                 if (nearPtCurLn === 1) {
                     ln.pt1 = existLn.pts[nearPtExistLn]; // share the same Point object
                     ln.movePt1(existLn.pts[nearPtExistLn].x, existLn.pts[nearPtExistLn].y); // update svgLn

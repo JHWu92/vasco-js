@@ -10,7 +10,7 @@ define(function (require) {
 
         // app scripts
         utils = require('app/utils'),
-        constant = require('app/constant.js'),
+        constant = require('app/constant'),
 
         // data structure
         Point = require('app/shape/Point'),
