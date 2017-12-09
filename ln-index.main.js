@@ -83,11 +83,13 @@ define(function (require) {
             if (nearPtExistLn !== 0) {
                 console.log('need to snap to ' + existLn.toString(), 'nearPtExistLn:', nearPtExistLn);
                 if (nearPtCurLn === 1) {
-                    ln.movePt1(existLn.pts[nearPtExistLn].x, existLn.pts[nearPtExistLn].y);
+                    ln.pt1 = existLn.pts[nearPtExistLn]; // share the same Point object
+                    ln.movePt1(existLn.pts[nearPtExistLn].x, existLn.pts[nearPtExistLn].y); // update svgLn
 
                 }
                 if (nearPtCurLn === 2) {
-                    ln.movePt2(existLn.pts[nearPtExistLn].x, existLn.pts[nearPtExistLn].y);
+                    ln.pt2 = existLn.pts[nearPtExistLn]; // share the same Point object
+                    ln.movePt2(existLn.pts[nearPtExistLn].x, existLn.pts[nearPtExistLn].y); // update svgLn
                 }
                 $('#status').text('snap to ' + existLn.pts[nearPtExistLn].toString());
                 break;
@@ -133,6 +135,13 @@ define(function (require) {
         $('#status').text('Drag to adjust ' + ln.toString());
         // update 
         state.mPrev = [state.m[0], state.m[1]];
+        for (var i in state.lns) {
+            if (i === state.onId) {
+                continue;
+            }
+            var existLn = state.lns[i];
+            existLn.update();
+        }
     }
 
     function mousedown() {
