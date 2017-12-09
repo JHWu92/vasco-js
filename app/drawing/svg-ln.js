@@ -17,8 +17,9 @@ define(function () {
         this.color = '#666';
     }
 
-    var pro = SvgLn.prototype;
-
+    var pro = SvgLn.prototype,
+        strokeWidth = 5; // keep it consistent with main.css.line
+    
     pro.toString = function () {
         return 'Line from ' + this.pt1.toString() + ' to ' + this.pt2.toString();
     };
@@ -45,7 +46,7 @@ define(function () {
                 id: this.id,
                 fill: this.color,
                 'stroke-linecap': "round",
-                'stroke-width': 5, // keep it consistent with main.css.line
+                'stroke-width': strokeWidth,
                 'class': this.cname
             })
             .style({
@@ -105,9 +106,8 @@ define(function () {
 
     /** mx, my: mouse coordinate */
     pro.nearEndPt = function (mx, my) {
-        
-        var strokeWidth = this.svg.select('#' + this.id).attr('stroke-width'),
-            x1 = this.pt1.getX(),
+
+        var x1 = this.pt1.getX(),
             y1 = this.pt1.getY(),
             x2 = this.pt2.getX(),
             y2 = this.pt2.getY(),
@@ -119,7 +119,7 @@ define(function () {
             minDist = (dist2 < dist1) ? dist2 : dist1,
             distThres = Math.max(strokeWidth, Math.abs(x2 - x1) * 0.1 + Math.abs(y2 - y1) * 0.1);
         distThres = Math.min(distThres, strokeWidth * 3);
-        
+
         if (minDist < distThres) {
             return nearerPt;
         } else {
