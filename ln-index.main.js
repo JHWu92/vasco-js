@@ -171,6 +171,11 @@ define(function (require) {
                 });
                 break;
             case 3: // right click
+                var temp = state.lns[state.onId];
+                temp.del();
+                delete state.lns[state.onId];
+
+                $('#tree').text(JSON.stringify(state.lns));
                 break;
         }
     }
