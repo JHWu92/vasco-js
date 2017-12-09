@@ -21,7 +21,7 @@ define(function (require) {
             mPrev: [0, 0],
             autolid: 0,
             onId: '',
-            onClass: '',
+            downOnClass: '',
             etype: 0,
             lns: {}
         },
@@ -68,6 +68,32 @@ define(function (require) {
         }
     }
 
+    function snapNewLine() {
+        var nearPtExistLn, existLn, i,
+            ln = state.lns[state.onId],
+            nearPtCurLn = ln.nearEndPt(state.m[0], state.m[1]);
+        console.log('curLn', ln.toString(), 'curPt', nearPtCurLn);
+        for (i in state.lns) {
+            if (i === state.onId) {
+                continue;
+            }
+            existLn = state.lns[i];
+            nearPtExistLn = existLn.nearEndPt(state.m[0], state.m[1]);
+
+            if (nearPtExistLn !== 0) {
+                console.log('need to snap to ' + existLn.toString(), 'nearPtExistLn:', nearPtExistLn);
+                if (nearPtCurLn === 1) {
+                    ln.movePt1(existLn.pts[nearPtExistLn].x, existLn.pts[nearPtExistLn].y);
+
+                }
+                if (nearPtCurLn === 2) {
+                    ln.movePt2(existLn.pts[nearPtExistLn].x, existLn.pts[nearPtExistLn].y);
+                }
+                $('#status').text('snap to ' + existLn.pts[nearPtExistLn].toString());
+                break;
+            }
+        }
+    }
     //------------------------------------------------
     // Event handlers
     //------------------------------------------------
@@ -75,17 +101,17 @@ define(function (require) {
     function updateEventState(event) {
         // set current state of mouse event
         state.onId = event.target.id;
-        state.onClass = event.target.className.baseVal;
+        state.downOnClass = event.target.className.baseVal;
         state.etype = event.which;
         state.mPrev = [state.m[0], state.m[1]];
-        //        console.log('mousedown', state.m, state.etype, ' target ', state.onId, state.onClass);
+        //        console.log('mousedown', state.m, state.etype, ' target ', state.onId, state.downOnClass);
     }
 
     function clearEventState() {
 
         // reset state
         state.onId = '';
-        state.onClass = '';
+        state.downOnClass = '';
         state.etype = 0;
     }
 
@@ -101,7 +127,7 @@ define(function (require) {
         mousemove.apply(this);
         var ln = state.lns[state.onId];
 
-        // console.log('mmOnln', ln.toString(), state.onId, state.onClass, state.nearPt);
+        // console.log('mmOnln', ln.toString(), state.onId, state.downOnClass, state.nearPt);
 
         ln.moveLnOnDrag(state.mPrev[0], state.mPrev[1], state.m[0], state.m[1], state.nearPt);
         $('#status').text('Drag to adjust ' + ln.toString());
@@ -121,7 +147,7 @@ define(function (require) {
         // console.log('mousedown', JSON.stringify(state));
 
         // switch function based on Element class 
-        switch (state.onClass) {
+        switch (state.downOnClass) {
             case 'line':
                 mousedownOnLine();
                 break;
@@ -167,6 +193,7 @@ define(function (require) {
                 state.onId = lid;
                 state.lns[lid] = sLn;
                 state.nearPt = 2;
+                state.autolid += 1;
                 // change mousemove
                 svg.on({
                     mousemove: mousemoveOnLn
@@ -181,7 +208,10 @@ define(function (require) {
             return;
         }
 
-        switch (state.onClass) {
+        state.upOnClass = event.target.className.baseVal;
+        state.upOnId = event.target.id;
+
+        switch (state.downOnClass) {
             case 'line':
                 mouseupOnLine();
                 break;
@@ -198,6 +228,8 @@ define(function (require) {
     function mouseupOnLine() {
         switch (state.etype) {
             case 1: // left click
+                snapNewLine();
+
                 svg.on({
                     mousemove: mousemove
                 });
@@ -212,9 +244,10 @@ define(function (require) {
                 if (!ln.legitLn()) {
                     ln.del();
                     $('#status').text('please left click and drag to insert a new line');
+                } else {
+                    snapNewLine();
+                    $('#tree').text(JSON.stringify(state.lns));
                 }
-                state.autolid += 1;
-                $('#tree').text(state.lns);
                 svg.on({
                     mousemove: mousemove
                 });

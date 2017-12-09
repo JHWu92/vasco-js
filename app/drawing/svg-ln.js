@@ -10,27 +10,31 @@ define(function () {
         this.id = id;
         this.pt1 = pt1;
         this.pt2 = pt2;
+        this.pts = {
+            1: this.pt1,
+            2: this.pt2
+        };
         this.color = '#666';
     }
 
     var pro = SvgLn.prototype;
-    
+
     pro.toString = function () {
         return 'Line from ' + this.pt1.toString() + ' to ' + this.pt2.toString();
     };
-    
+
     pro.setClass = function (cname) {
         this.cname = cname;
     };
-    
+
     pro.setColor = function (color) {
         this.color = color;
     };
-    
+
     pro.del = function () {
         this.svg.select('#' + this.id).remove();
     };
-    
+
     pro.draw = function () {
         this.svg.append("line")
             .attr({
@@ -41,6 +45,7 @@ define(function () {
                 id: this.id,
                 fill: this.color,
                 'stroke-linecap': "round",
+                'stroke-width': 5, // keep it consistent with main.css.line
                 'class': this.cname
             })
             .style({
@@ -100,20 +105,23 @@ define(function () {
 
     /** mx, my: mouse coordinate */
     pro.nearEndPt = function (mx, my) {
+        
         var strokeWidth = this.svg.select('#' + this.id).attr('stroke-width'),
             x1 = this.pt1.getX(),
             y1 = this.pt1.getY(),
             x2 = this.pt2.getX(),
             y2 = this.pt2.getY(),
-            xthre = Math.max(strokeWidth, Math.abs(x2 - x1) * 0.1),
-            ythres = Math.max(strokeWidth, Math.abs(y2 - y1) * 0.1);
-
-        if (Math.abs(mx - x1) < xthre && Math.abs(my - y1) < ythres) {
-            // near point 1
-            return 1;
-        } else if (Math.abs(mx - x2) < xthre && Math.abs(my - y2) < ythres) {
-            // near point 2
-            return 2;
+            //            xthre = Math.max(strokeWidth, Math.abs(x2 - x1) * 0.1),
+            //            ythres = Math.max(strokeWidth, Math.abs(y2 - y1) * 0.1),
+            dist1 = Math.abs(mx - x1) + Math.abs(my - y1),
+            dist2 = Math.abs(mx - x2) + Math.abs(my - y2),
+            nearerPt = (dist2 < dist1) ? 2 : 1,
+            minDist = (dist2 < dist1) ? dist2 : dist1,
+            distThres = Math.max(strokeWidth, Math.abs(x2 - x1) * 0.1 + Math.abs(y2 - y1) * 0.1);
+        distThres = Math.min(distThres, strokeWidth * 3);
+        
+        if (minDist < distThres) {
+            return nearerPt;
         } else {
             // not near endpoints
             return 0;
