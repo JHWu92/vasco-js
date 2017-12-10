@@ -5,8 +5,8 @@ define(['./constant', './QEdgeList', './QEdgeListRef', './QNode', './opHelper'],
 
 
     /** false if there are more than 1 vertex in s
-      * l: QEdgeList, s: QSquare
-      */
+     * l: QEdgeList, s: QSquare
+     */
     function pm1Check(l, s) {
         if (l === null) {
             return true;
@@ -16,6 +16,15 @@ define(['./constant', './QEdgeList', './QEdgeListRef', './QNode', './opHelper'],
         // then true if l has null NEXT
         if (l.DATA.pt1 === l.DATA.pt2) // pointer comparison
             return (l.NEXT === null);
+
+        // for the line without NEXT,
+        // return true if the whole line outside square
+        if (l.NEXT === null) {
+            return !(
+                op.ptInSquare(l.DATA.pt1, s) &&
+                op.ptInSquare(l.DATA.pt2, s)
+            );
+        }
 
         // if this QLine is within s, then false
         if (op.ptInSquare(l.DATA.pt1, s) && op.ptInSquare(l.DATA.pt2, s)) {
@@ -96,7 +105,7 @@ define(['./constant', './QEdgeList', './QEdgeListRef', './QNode', './opHelper'],
         }
 
         if (r.nodeType !== cons.gray) {
-            console.log(md, 'insert, not a gray node, existing dictionary=', (r.DICTIONARY===null)?'null':r.DICTIONARY.toString());
+            console.log(md, 'insert, not a gray node, existing dictionary=', (r.DICTIONARY === null) ? 'null' : r.DICTIONARY.toString());
             newList = op.mergeLists(newList, r.DICTIONARY);
             console.log(md, 'merged, newList for r.dictionary', newList.toString());
             // console.log('newList after mergeLists:', newList);
