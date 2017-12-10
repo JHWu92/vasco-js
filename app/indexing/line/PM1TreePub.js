@@ -42,6 +42,7 @@ define(function (require) {
         
         console.log('==============================inserted:', pt1.toString(), pt2.toString(), ok);
         if(!ok){
+            console.log('******************************need to delete');
             PM1Tree.delete(nList, tree);
         }
         return ok;

@@ -85,6 +85,8 @@ define(function (require) {
             }
             l = l.NEXT;
         }
+        
+        return root;
     }
 
     /*pt:Point, s:QSquare*/
@@ -218,14 +220,14 @@ define(function (require) {
      */
     function clipLines(l, s) {
         if (l === null) {
-            console.log('clipLines: l===null');
+            // console.log('clipLines: l===null');
             return null;
         }
         if (clipSquare(l.DATA, s)) {
-            console.log('clipSquare==true', l.DATA.toString());
+            // console.log('clipSquare==true', l.DATA.toString());
             return (addToList(l.DATA, clipLines(l.NEXT, s)));
         }
-        console.log('clipSquare=false', l.DATA.toString());
+        // console.log('clipSquare=false', l.DATA.toString());
         return (clipLines(l.NEXT, s));
     }
 
