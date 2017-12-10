@@ -41,10 +41,17 @@ define(function (require) {
             ok = PM1Tree.insert(nList, tree, maxDecomp);
         
         console.log('inserted:', pt1.toString(), pt2.toString(), ok);
-        // TODO: if !ok, delete inserted.
+        if(!ok){
+            PM1Tree.delete(nList, tree);
+        }
         return ok;
 
     }
+    
+    function getPartitions(){
+        return op.getPartitions(tree);
+    }
+    
     return {
         init: init,
         toString: toString,
@@ -53,7 +60,7 @@ define(function (require) {
         options: options,
         insert: insert,
 //        del: del,
-//        getPartitions: getPartitions,
+        getPartitions: getPartitions,
 //        rebuild: rebuild
     };
 });

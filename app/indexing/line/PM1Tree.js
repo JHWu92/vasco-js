@@ -1,6 +1,6 @@
 /*global define*/
 
-define(['./constant', './QEdgeList', './QNode', './opHelper'], function (cons, QEdgeList, QNode, op) {
+define(['./constant', './QEdgeList', './QEdgeListRef', './QNode', './opHelper'], function (cons, QEdgeList, QEdgeListRef, QNode, op) {
     'use strict';
 
 
@@ -56,22 +56,32 @@ define(['./constant', './QEdgeList', './QNode', './opHelper'], function (cons, Q
         // if neither vertex of l === pt
         return false;
     }
-    
+
     /** P: QNode, R: QNode, L: QEdgeListRef */
-    function tryToMergePM1(P, R, L){
-        // TODO: delete function
-        return;
+    function tryToMergePM1(P, R, L) {
+        if (P.nodeType !== cons.gray) {
+            L.val = op.setUnion(L.val, P.DICTIONARY);
+            return (true);
+        } else {
+            return (
+                tryToMergePM1(P.SON[0], R, L) &&
+                tryToMergePM1(P.SON[1], R, L) &&
+                tryToMergePM1(P.SON[2], R, L) &&
+                tryToMergePM1(P.SON[3], R, L) &&
+                pm1Check(L.val, R.SQUARE)
+            );
+        }
     }
     // *********************
     // public methods
     // *********************
-    
+
     /*p: QEdgeList, r: QNode, md: max decomposition*/
     function insert(p, r, md) {
         var ok = true,
             newList = op.clipLines(p, r.SQUARE);
 
-        console.log('PM1Tree: insert. newList: ', newList);
+        // console.log('PM1Tree: insert. newList: ', newList);
         // no line is inside the square window
         if (newList === null) {
             return ok;
@@ -80,7 +90,7 @@ define(['./constant', './QEdgeList', './QNode', './opHelper'], function (cons, Q
         if (r.NODETYPE !== cons.gray) {
             console.log('insert, not a gray node');
             newList = op.mergeLists(newList, r.DICTIONARY);
-            console.log('newList after mergeLists:', newList);
+            // console.log('newList after mergeLists:', newList);
             if (pm1Check(newList, r.SQUARE) || md < 0) {
                 if (md < 0) {
                     ok = false;
@@ -93,15 +103,43 @@ define(['./constant', './QEdgeList', './QNode', './opHelper'], function (cons, Q
         }
 
         for (var i = 0; i < 4; i += 1) {
-            console.log('perform insert for son',i);
+            // console.log('perform insert for son',i);
             ok = insert(newList, r.SON[i], md - 1) && ok;
         }
         return ok;
 
     }
 
-    
+
+    /*P: QEdgeList, R: QNode*/
+    function Delete(P, R) {
+        var L = new QEdgeListRef();
+        L.val = op.clipLines(P, R.SQUARE);
+        if (L.val === null) {
+            return null;
+        }
+
+        if (R.nodeType === cons.gray) {
+            for (var i = 0; i < 4; i += 1) {
+                Delete(L.val, R.SON[i]);
+            }
+            if (op.possiblePM1RMerge(R)) {
+                L.val = null;
+                if (tryToMergePM1(R, R, L)) {
+                    R.DICTIONARY = L.val;
+                    R.nodeType = cons.black;
+                    R.SON = [null, null, null, null];
+                }
+            }
+
+        } else {
+            R.DICTIONARY = op.setDifference(R.DICTIONARY, L.val);
+        }
+    }
+
+
     return {
-        insert: insert
+        insert: insert,
+        'delete': Delete
     };
 });

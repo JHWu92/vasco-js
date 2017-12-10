@@ -13,6 +13,7 @@ define(function (require) {
         // data structure
         Point = require('app/shape/Point'),
         SvgLn = require('app/drawing/svg-ln'),
+        SvgRect = require('app/drawing/svg-rect'),
 
         // drawing state
         state = {
@@ -60,8 +61,8 @@ define(function (require) {
     $('#options').append(Tree.options());
     $('#update').on('click', updateParam);
     Tree.init();
-    
-    
+
+
     // helper function
     function updateParam() {
         $('#status').text('update parameters');
@@ -85,18 +86,16 @@ define(function (require) {
         layerPartition.selectAll('*').remove();
 
         // redraw all partitions
-        var temp, partitions, svgPart;
+        var rect, partitions, svgPart, i;
         // get current partitions
-        //        partitions = Tree.getPartitions(0, 0, constant.svgWidth, constant.svgHeight);
+        partitions = Tree.getPartitions();
         if (partitions === null) {
             return;
         }
         // draw partitions
-        for (var i = 0; i < partitions.length; i++) {
-            temp = partitions[i];
-            svgPart = new SvgLn(layerPartition, 'partition_' + i,
-                new Point(temp[0], temp[1]),
-                new Point(temp[2], temp[3]));
+        for (i = 0; i < partitions.length; i++) {
+            rect = partitions[i];
+            svgPart = new SvgRect(layerPartition, 'partition_' + i, rect.x, rect.y, rect.w, rect.h);
             svgPart.setClass('partition');
             svgPart.draw();
         }
@@ -130,8 +129,8 @@ define(function (require) {
             }
         }
     }
-    
-    
+
+
     //------------------------------------------------
     // Event handlers
     //------------------------------------------------
@@ -165,11 +164,10 @@ define(function (require) {
         mousemove.apply(this);
         var ln = state.lns[state.onId];
 
-        // console.log('mmOnln', ln.toString(), state.onId, state.downOnClass, state.nearPt);
-
         ln.moveLnOnDrag(state.mPrev[0], state.mPrev[1], state.m[0], state.m[1], state.nearPt);
         $('#status').text('Drag to adjust ' + ln.toString());
-        // update 
+        
+        // update SVG lines
         state.mPrev = [state.m[0], state.m[1]];
         for (var i in state.lns) {
             if (i === state.onId) {
@@ -178,6 +176,8 @@ define(function (require) {
             var existLn = state.lns[i];
             existLn.update();
         }
+        
+        drawPartition();
     }
 
     function mousedown() {
@@ -221,6 +221,7 @@ define(function (require) {
                 delete state.lns[state.onId];
 
                 $('#tree').text(JSON.stringify(state.lns));
+                drawPartition();
                 break;
         }
     }
@@ -293,9 +294,13 @@ define(function (require) {
                     $('#status').text('please left click and drag to insert a new line');
                 } else {
                     snapNewLine();
-                    Tree.insert(ln.pt1, ln.pt2);
-                    $('#tree').text(Tree.toString());
-//                    $('#tree').text(JSON.stringify(state.lns));
+                    if(Tree.insert(ln.pt1, ln.pt2)){
+                        $('#tree').text(Tree.toString());
+                        drawPartition();
+                    }else{
+                        ln.del();
+                        $('#status').text('cannont insert here');
+                    }
                 }
                 svg.on({
                     mousemove: mousemove

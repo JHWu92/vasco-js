@@ -20,6 +20,14 @@ define(function () {
     QSquare.prototype.toString = function () {
         return 'SQUARE: ' + this.CENTER.toString() + ', len: ' + this.LEN;
     };
-    
+
+    QSquare.prototype.toXYWH = function () {
+        return {
+            x: this.CENTER.x - this.LEN / 2,
+            y: this.CENTER.y - this.LEN / 2,
+            w: this.LEN,
+            h: this.LEN
+        };
+    };
     return QSquare;
 });

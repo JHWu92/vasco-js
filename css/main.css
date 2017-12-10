@@ -2,12 +2,16 @@ circle:hover {
     fill: #2ca25f;
 }
 
-.partition {
+line.partition {
     stroke: steelblue;
     stroke-width: 1px;
     /*stroke-linecap: round;*/
 }
-
+rect.partition{
+    stroke: steelblue;
+    stroke-width : 1px;
+    fill: None;
+}
 svg {
     border: 1px solid grey;
     width: 700px;
@@ -23,3 +27,5 @@ svg {
     stroke: #2ca25f;
     stroke-width: 6px;
 }
+
+

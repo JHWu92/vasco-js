@@ -14,10 +14,79 @@ define(function (require) {
         var center = new Point(len / 2, len / 2),
             s = new QSquare(center, len),
             root = new QNode(s, 0);
-        
-        console.log('initRoot', root.toString() );
+
+        // console.log('initRoot', root.toString());
         return root;
     }
+
+    /*l,r: QEdgeList*/
+    function setUnion(l, r) {
+        var root = null,
+            last = null,
+            left = l,
+            pt;
+
+        while (l !== null) {
+            last = root;
+            root = new QEdgeList(l.DATA);
+            if (last !== null) {
+                root.NEXT = last;
+            }
+            l = l.NEXT;
+
+        }
+        while (r !== null) {
+            for (pt = left; pt !== null; pt = pt.NEXT) {
+                if (r.DATA.equals(pt.DATA)) {
+                    break;
+                }
+            }
+            if (pt === null) {
+                last = root;
+                root = new QEdgeList(r.DATA);
+                if (last !== null) {
+                    root.NEXT = last;
+                }
+            }
+            r = r.NEXT;
+        }
+        return root;
+    }
+
+    /*l,r: QEdgeList*/
+    function setDifference(l, r) {
+        var root = null,
+            last = null,
+            left = l,
+            pt,
+            loc;
+
+        while (l !== null) { // erase duplicate elements just once
+            for (pt = r; pt !== null; pt = pt.NEXT) {
+                if (l.DATA.equals(pt.DATA)) {
+
+                    for (loc = left; loc !== l; loc = loc.NEXT) {
+                        if (loc.DATA.equals(l.DATA)) {
+                            pt = null;
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+            }
+
+            if (pt === null) {
+                last = root;
+                root = new QEdgeList(l.DATA);
+                if (last !== null) {
+                    root.Next = last;
+                }
+            }
+            l = l.NEXT;
+        }
+    }
+
     /*pt:Point, s:QSquare*/
     function ptInSquare(pt, s) {
         var halfLen = s.LEN / 2,
@@ -178,11 +247,35 @@ define(function (require) {
 
     }
 
+    function getPartitions(qnode) {
+        if (qnode === null) {
+            return [];
+        }
+        var rects = [qnode.SQUARE.toXYWH()],
+            i;
+        for (i = 0; i < 4; i += 1) {
+            Array.prototype.push.apply(rects, getPartitions(qnode.SON[i]));
+        }
+        return rects;
+    }
+
+    /*P: QNode*/
+    function possiblePM1RMerge(P) {
+        return (P.SON[0].nodeType !== cons.gray ||
+            P.SON[1].nodeType !== cons.gray ||
+            P.SON[2].nodeType !== cons.gray ||
+            P.SON[3].nodeType !== cons.gray)
+    }
+
     return {
         clipLines: clipLines,
         mergeLists: mergeLists,
         ptInSquare: ptInSquare,
         initRoot: initRoot,
-        splitPMNode: splitPMNode
+        splitPMNode: splitPMNode,
+        getPartitions: getPartitions,
+        possiblePM1RMerge: possiblePM1RMerge,
+        setDifference: setDifference,
+        setUnion: setUnion
     };
 });
