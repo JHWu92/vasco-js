@@ -23,6 +23,7 @@ define(function (require) {
             onId: '',
             downOnClass: '',
             etype: 0,
+            rebuildOnMove: false,
             lns: {}
         },
 
@@ -150,6 +151,7 @@ define(function (require) {
         state.onId = '';
         state.downOnClass = '';
         state.etype = 0;
+        state.rebuildOnMove = false;
     }
 
     function mousemove() {
@@ -162,11 +164,16 @@ define(function (require) {
 
     function mousemoveOnLn() {
         mousemove.apply(this);
-        var ln = state.lns[state.onId];
+        var res,
+            ln = state.lns[state.onId],
+            oldx1 = ln.pt1.x,
+            oldy1 = ln.pt1.y,
+            oldx2 = ln.pt2.x,
+            oldy2 = ln.pt2.y;
 
         ln.moveLnOnDrag(state.mPrev[0], state.mPrev[1], state.m[0], state.m[1], state.nearPt);
         $('#status').text('Drag to adjust ' + ln.toString());
-        
+
         // update SVG lines
         state.mPrev = [state.m[0], state.m[1]];
         for (var i in state.lns) {
@@ -176,8 +183,18 @@ define(function (require) {
             var existLn = state.lns[i];
             existLn.update();
         }
-        
-        drawPartition();
+
+        if (state.rebuildOnMove) {
+
+            res = Tree.rebuild(state.lns, state.autolid);
+            if (!res.succeed) {
+                state.lns[state.onId].moveLn(oldx1, oldy1, oldx2, oldy2);
+                $('#status').text("Can't move to this place, because " + res.msg);
+            }
+            $('#tree').text(Tree.toString());
+            drawPartition();
+        }
+
     }
 
     function mousedown() {
@@ -210,18 +227,21 @@ define(function (require) {
         switch (state.etype) {
             case 1: // left click
 
-                state.nearPt = state.lns[state.onId].nearEndPt(state.mPrev[0], state.mPrev[1])
+                state.nearPt = state.lns[state.onId].nearEndPt(state.mPrev[0], state.mPrev[1]);
+                state.rebuildOnMove = true;
                 svg.on({
                     mousemove: mousemoveOnLn
                 });
                 break;
             case 3: // right click
                 var temp = state.lns[state.onId];
-                temp.del();
-                delete state.lns[state.onId];
+                if (Tree.del(temp.pt1, temp.pt2)) {
+                    temp.del();
+                    delete state.lns[state.onId];
+                    $('#tree').text(JSON.stringify(state.lns));
+                    drawPartition();
 
-                $('#tree').text(JSON.stringify(state.lns));
-                drawPartition();
+                }
                 break;
         }
     }
@@ -245,6 +265,7 @@ define(function (require) {
                 state.lns[lid] = sLn;
                 state.nearPt = 2;
                 state.autolid += 1;
+                state.rebuildOnMove = false;
                 // change mousemove
                 svg.on({
                     mousemove: mousemoveOnLn
@@ -294,10 +315,10 @@ define(function (require) {
                     $('#status').text('please left click and drag to insert a new line');
                 } else {
                     snapNewLine();
-                    if(Tree.insert(ln.pt1, ln.pt2)){
+                    if (Tree.insert(ln.pt1, ln.pt2)) {
                         $('#tree').text(Tree.toString());
                         drawPartition();
-                    }else{
+                    } else {
                         ln.del();
                         $('#status').text('cannont insert here');
                     }

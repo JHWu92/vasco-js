@@ -4,6 +4,30 @@ define(['./constant', './QEdgeList', './QEdgeListRef', './QNode', './opHelper'],
     'use strict';
 
 
+    /** true if l and all sons of l shares the same vertex
+     * and the share vertex is the only vertex inside the square.
+     * pt: Point, l: QEdgeList, s: QSquare*/
+    function sharePM1Vertex(pt, l, s) {
+
+        // l===null to stop recursion,
+        // meaning all sons in the same square share the same Point
+        if (l === null) {
+            return true;
+        }
+
+        // pointer comparison
+        // if pt1 is the share vertex, pt2 couldn't be inside s
+        if (pt === l.DATA.pt1) {
+            return (!op.ptInSquare(l.DATA.pt2, s) && sharePM1Vertex(pt, l.NEXT, s));
+        }
+        if (pt === l.DATA.pt2) {
+            return (!op.ptInSquare(l.DATA.pt1, s) && sharePM1Vertex(pt, l.NEXT, s));
+        }
+
+        // if neither vertex of l === pt
+        return false;
+    }
+
     /** false if there are more than 1 vertex in s
      * l: QEdgeList, s: QSquare
      */
@@ -14,8 +38,10 @@ define(['./constant', './QEdgeList', './QEdgeListRef', './QNode', './opHelper'],
 
         // if pt1===pt2(normally shouldn't happen)
         // then true if l has null NEXT
-        if (l.DATA.pt1 === l.DATA.pt2) // pointer comparison
+        // pointer comparison
+        if (l.DATA.pt1 === l.DATA.pt2) {
             return (l.NEXT === null);
+        }
 
         // for the line without NEXT,
         // return true if the whole line outside square
@@ -41,30 +67,6 @@ define(['./constant', './QEdgeList', './QEdgeListRef', './QNode', './opHelper'],
         }
 
         // if none of its vertex is within s, then false
-        return false;
-    }
-
-    /** true if l and all sons of l shares the same vertex
-     * and the share vertex is the only vertex inside the square.
-     * pt: Point, l: QEdgeList, s: QSquare*/
-    function sharePM1Vertex(pt, l, s) {
-
-        // l===null to stop recursion,
-        // meaning all sons in the same square share the same Point
-        if (l === null) {
-            return true;
-        }
-
-        // pointer comparison
-        // if pt1 is the share vertex, pt2 couldn't be inside s
-        if (pt === l.DATA.pt1) {
-            return (!op.ptInSquare(l.DATA.pt2, s) && sharePM1Vertex(pt, l.NEXT, s));
-        }
-        if (pt === l.DATA.pt2) {
-            return (!op.ptInSquare(l.DATA.pt1, s) && sharePM1Vertex(pt, l.NEXT, s));
-        }
-
-        // if neither vertex of l === pt
         return false;
     }
 
@@ -119,53 +121,53 @@ define(['./constant', './QEdgeList', './QEdgeListRef', './QNode', './opHelper'],
 
     /*P: QEdgeList, R: QNode*/
     function Delete(P, R) {
-        console.log('delete target list:', P.toString());
+        // console.log('delete target list:', P.toString());
         var L = new QEdgeListRef();
         L.val = op.clipLines(P, R.SQUARE);
         if (L.val === null) {
-            console.log('clipLines === null, abort');
+            // console.log('clipLines === null, abort');
             return null;
         }
-        console.log('lines cliped:', L.val.toString(), 'in node:', R.toString());
+        // console.log('lines cliped:', L.val.toString(), 'in node:', R.toString());
 
         if (R.nodeType === cons.gray) {
-            console.log('a gray node, go for sons');
+            // console.log('a gray node, go for sons');
             for (var i = 0; i < 4; i += 1) {
-                console.log('Son: ', cons.QuadName[i]);
+                // console.log('Son: ', cons.QuadName[i]);
                 Delete(L.val, R.SON[i]);
             }
 
             if (op.possiblePM1RMerge(R)) {
-                console.log('R can be merged after deletion on sons');
+                // console.log('R can be merged after deletion on sons');
                 L.val = null;
                 if (tryToMergePM1(R, R, L)) {
                     R.DICTIONARY = L.val;
                     R.nodeType = cons.black;
                     R.SON = [null, null, null, null];
                 }
-                console.log('new R', R.toString());
+                // console.log('new R', R.toString());
             }
 
         } else {
-            console.log('a black node, remove L.val from dictionary');
+            // console.log('a black node, remove L.val from dictionary');
             R.DICTIONARY = op.setDifference(R.DICTIONARY, L.val);
         }
     }
 
     /** P: QNode, R: QNode, L: QEdgeListRef */
-    function tryToMergePM1(P, R, L, quad) {
-        console.log((typeof quad !== undefined) ? cons.QuadName[quad] : '', P);
-        console.log((P === null) ? 'p=null' : P.toString());
-        console.log((R === null) ? 'r=null' : R.toString());
+    function tryToMergePM1(P, R, L) {
+        // console.log((typeof quad !== undefined) ? cons.QuadName[quad] : '', P);
+        // console.log((P === null) ? 'p=null' : P.toString());
+        // console.log((R === null) ? 'r=null' : R.toString());
         if (P.nodeType !== cons.gray) {
             L.val = op.setUnion(L.val, P.DICTIONARY);
             return (true);
         } else {
             return (
-                tryToMergePM1(P.SON[0], R, L, 0) &&
-                tryToMergePM1(P.SON[1], R, L, 1) &&
-                tryToMergePM1(P.SON[2], R, L, 2) &&
-                tryToMergePM1(P.SON[3], R, L, 3) &&
+                tryToMergePM1(P.SON[0], R, L) &&
+                tryToMergePM1(P.SON[1], R, L) &&
+                tryToMergePM1(P.SON[2], R, L) &&
+                tryToMergePM1(P.SON[3], R, L) &&
                 pm1Check(L.val, R.SQUARE)
             );
         }
