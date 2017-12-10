@@ -84,11 +84,11 @@ define(['./constant', './QEdgeList', './QEdgeListRef', './QNode', './opHelper'],
             newList = op.clipLines(p, r.SQUARE);
 
         if (newList !== null) {
-            console.log('to insert p', p.toString());
-            console.log('PM1Tree: insert. newList: ', newList.toString());
+            console.log(md, 'candidate list p', p.toString());
+            console.log(md, 'clip newList: ', newList.toString());
 
         } else {
-            console.log('no NewList');
+            console.log(md, 'no NewList');
         }
         // no line is inside the square window
         if (newList === null) {
@@ -96,25 +96,25 @@ define(['./constant', './QEdgeList', './QEdgeListRef', './QNode', './opHelper'],
         }
 
         if (r.nodeType !== cons.gray) {
-            console.log('insert, not a gray node, r.dictionary=', r.DICTIONARY);
+            console.log(md, 'insert, not a gray node, existing dictionary=', (r.DICTIONARY===null)?'null':r.DICTIONARY.toString());
             newList = op.mergeLists(newList, r.DICTIONARY);
-            console.log('newList for r.dictionary', newList.toString());
+            console.log(md, 'merged, newList for r.dictionary', newList.toString());
             // console.log('newList after mergeLists:', newList);
             if (pm1Check(newList, r.SQUARE) || md < 0) {
                 if (md < 0) {
                     ok = false;
                 }
                 r.DICTIONARY = newList;
-                console.log('update root.DICTIONARY');
+                console.log(md, 'update root.DICTIONARY', ok);
                 return ok;
             } else {
                 op.splitPMNode(r);
-                console.log('failed pm1Check, split root')
+                console.log(md, 'failed pm1Check, split root')
             }
         }
 
         for (var i = 0; i < 4; i += 1) {
-            console.log('perform insert for son', cons.QuadName[i]);
+            console.log(md, 'perform insert for son', cons.QuadName[i]);
             ok = insert(newList, r.SON[i], md - 1) && ok;
         }
         return ok;
