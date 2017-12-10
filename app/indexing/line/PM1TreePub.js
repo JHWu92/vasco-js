@@ -40,7 +40,7 @@ define(function (require) {
         var nList = new QEdgeList(new QLine(pt1, pt2)),
             ok = PM1Tree.insert(nList, tree, maxDecomp);
         
-        console.log('inserted:', pt1.toString(), pt2.toString(), ok);
+        console.log('==============================inserted:', pt1.toString(), pt2.toString(), ok);
         if(!ok){
             PM1Tree.delete(nList, tree);
         }

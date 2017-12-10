@@ -4,7 +4,9 @@ define(['./constant', './QEdgeList', './QEdgeListRef', './QNode', './opHelper'],
     'use strict';
 
 
-    /*l: QEdgeList, s: QSquare*/
+    /** false if there are more than 1 vertex in s
+      * l: QEdgeList, s: QSquare
+      */
     function pm1Check(l, s) {
         if (l === null) {
             return true;
@@ -81,29 +83,38 @@ define(['./constant', './QEdgeList', './QEdgeListRef', './QNode', './opHelper'],
         var ok = true,
             newList = op.clipLines(p, r.SQUARE);
 
-        // console.log('PM1Tree: insert. newList: ', newList);
+        if (newList !== null) {
+            console.log('to insert p', p.toString());
+            console.log('PM1Tree: insert. newList: ', newList.toString());
+
+        } else {
+            console.log('no NewList');
+        }
         // no line is inside the square window
         if (newList === null) {
             return ok;
         }
 
-        if (r.NODETYPE !== cons.gray) {
-            console.log('insert, not a gray node');
+        if (r.nodeType !== cons.gray) {
+            console.log('insert, not a gray node, r.dictionary=', r.DICTIONARY);
             newList = op.mergeLists(newList, r.DICTIONARY);
+            console.log('newList for r.dictionary', newList.toString());
             // console.log('newList after mergeLists:', newList);
             if (pm1Check(newList, r.SQUARE) || md < 0) {
                 if (md < 0) {
                     ok = false;
                 }
                 r.DICTIONARY = newList;
+                console.log('update root.DICTIONARY');
                 return ok;
             } else {
                 op.splitPMNode(r);
+                console.log('failed pm1Check, split root')
             }
         }
 
         for (var i = 0; i < 4; i += 1) {
-            // console.log('perform insert for son',i);
+            console.log('perform insert for son', cons.QuadName[i]);
             ok = insert(newList, r.SON[i], md - 1) && ok;
         }
         return ok;
