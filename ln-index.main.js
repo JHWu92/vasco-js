@@ -54,7 +54,7 @@ define(function (require) {
         $('#supType').append('<li><a href="?type=' + type + '">' + Trees[type].getName() + '</a></li>');
     }
     // init chosen Tree structure
-    treeType = (typeof treeType === 'undefined' || !Trees.hasOwnProperty(treeType)) ? 'PointQuadTree' : treeType;
+    treeType = (typeof treeType === 'undefined' || !Trees.hasOwnProperty(treeType)) ? 'PM1Tree' : treeType;
     Tree = Trees[treeType];
     $('#treeType').text(Tree.getName() + ', ' + Tree.orderDependent());
     $('#options').append(Tree.options());
@@ -130,6 +130,8 @@ define(function (require) {
             }
         }
     }
+    
+    
     //------------------------------------------------
     // Event handlers
     //------------------------------------------------
@@ -256,9 +258,6 @@ define(function (require) {
             return;
         }
 
-        state.upOnClass = event.target.className.baseVal;
-        state.upOnId = event.target.id;
-
         switch (state.downOnClass) {
             case 'line':
                 mouseupOnLine();
@@ -294,7 +293,9 @@ define(function (require) {
                     $('#status').text('please left click and drag to insert a new line');
                 } else {
                     snapNewLine();
-                    $('#tree').text(JSON.stringify(state.lns));
+                    Tree.insert(ln.pt1, ln.pt2);
+                    $('#tree').text(Tree.toString());
+//                    $('#tree').text(JSON.stringify(state.lns));
                 }
                 svg.on({
                     mousemove: mousemove

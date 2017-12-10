@@ -2,7 +2,7 @@
 
 define(function () {
     'use strict';
-    
+
     function Point(x, y) {
         this.x = x;
         this.y = y;
@@ -12,10 +12,10 @@ define(function () {
     // augment Point
     var pro = Point.prototype;
     pro.name = 'Point';
-    pro.getX = function(){
+    pro.getX = function () {
         return this.x;
     };
-    pro.getY = function(){
+    pro.getY = function () {
         return this.y;
     };
     pro.getXY = function () {
