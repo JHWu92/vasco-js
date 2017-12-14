@@ -3,7 +3,7 @@
 define(function (require) {
     'use strict';
 
-    
+
     var cons = require('./constant'),
         Point = require('app/shape/Point'),
         QEdgeList = require('./QEdgeList'),
@@ -58,37 +58,44 @@ define(function (require) {
     function setDifference(l, r) {
         var root = null,
             last = null,
-            left = l,
-            pt,
-            loc;
+            left = l, //pointer to the original l
+            pt, // pointer to loop r
+            loc; // poniter to loop from the original l, stops at the current l
 
         while (l !== null) { // erase duplicate elements just once
-            for (pt = r; pt !== null; pt = pt.NEXT) {
+
+            loop1: for (pt = r; pt !== null; pt = pt.NEXT) {
                 if (l.DATA.equals(pt.DATA)) {
+                    // console.log('find elements in r that is equal to current l, discard this element', pt.toString());
+
                     for (loc = left; loc !== l; loc = loc.NEXT) {
                         if (loc.DATA.equals(l.DATA)) {
+                            // console.log('but this duplicate is erased once');
                             pt = null;
-                            console.log('setDiff: pt=null');
-                            break;
+                            break loop1;
                         }
                     }
 
+                    // if L.DATA.equals(pt.DATA) and the condition in this sub loop isn't trigger
+                    // then loop_r !==null
                     break;
                 }
             }
 
             if (pt === null) {
+                // console.log('add current l on top of existing root', (root===null)?0:root.length())
                 last = root;
+                // console.log('last:', last===null?'null':last.toString(), last!==null);
                 root = new QEdgeList(l.DATA);
                 if (last !== null) {
-                    root.Next = last;
+                    root.NEXT = last;
                 }
             }
-            
-            console.log('l=l.Next');
+
+            // console.log('current len(root)', (root===null)?0:root.length(), 'Next element in L');
             l = l.NEXT;
         }
-        
+
         return root;
     }
 

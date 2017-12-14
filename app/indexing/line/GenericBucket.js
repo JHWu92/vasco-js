@@ -52,9 +52,9 @@ define(function (require) {
             }
 
         } else {
-            console.log('level =', R.level, cons.colorName[R.nodeType],', len(dictionary):', R.DICTIONARY.length(), 'to delete L.val.length:', L.val.length());
+            console.log('************level =', R.level, cons.colorName[R.nodeType], R.DICTIONARY.length(), '-', L.val.length());
             R.DICTIONARY = op.setDifference(R.DICTIONARY, L.val);
-            console.log('level =', R.level, 'black node, after setDifference, len(dictionary):', (R.DICTIONARY===null)?0:R.DICTIONARY.length());
+            console.log('************level =', R.level, cons.colorName[R.nodeType], '=', (R.DICTIONARY===null)?0:R.DICTIONARY.length());
 
         }
     }

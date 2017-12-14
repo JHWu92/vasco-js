@@ -262,7 +262,7 @@ define(function (require) {
                 if (Tree.del(temp.pt1, temp.pt2)) {
                     temp.del();
                     delete state.lns[state.onId];
-                    $('#tree').text(JSON.stringify(state.lns));
+                    $('#tree').text(Tree.toString());
                     drawPartition();
 
                 }
