@@ -10,7 +10,7 @@ define(function (require) {
 
     function toString() {
         if (tree === null) {
-            return '';
+            return 'empty';
         }
         return tree.treeString();
     }

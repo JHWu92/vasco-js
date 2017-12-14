@@ -193,13 +193,17 @@ define(['./constant'], function (cons) {
             this.pt = rep.pt;
             this.DISC = rep.DISC;
             this.son = rep.son;
+            return {
+                deleted: true,
+                empty: true
+            };
         } else {
             father.son[father.directSonType(node)] = rep;
+            return {
+                deleted: true,
+                empty: false
+            };
         }
-        return {
-            deleted: true,
-            empty: true
-        };
     };
 
     pro.deleteHelperByNode = function (node) {
