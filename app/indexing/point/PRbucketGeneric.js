@@ -79,15 +79,15 @@ define(['./constant'], function (cons) {
 
     /* compare pt to a center (cx,cy) of a bucket */
     pro.PRCompare = function (pt) {
-        // NW(0): x< this.x  & y< this.y
-        // NE(1): x>=this.x  & y< this.y
-        // SW(2): x< this.x  & y<=this.y
-        // SE(3): x>=this.x  & y<=this.y
+        // NW(0): x< this.x  & y>=this.y
+        // NE(1): x>=this.x  & y>=this.y
+        // SW(2): x< this.x  & y< this.y
+        // SE(3): x>=this.x  & y< this.y
         if (pt.x < this.cx) { // West
-            return (pt.y > this.cy) ? cons.SW : cons.NW;
+            return (pt.y < this.cy) ? cons.SW : cons.NW;
         }
         // East
-        return (pt.y > this.cy) ? cons.SE : cons.NE;
+        return (pt.y < this.cy) ? cons.SE : cons.NE;
     };
 
 
@@ -176,10 +176,10 @@ define(['./constant'], function (cons) {
             }
             return [];
         }
-        Array.prototype.push.apply(partitions, partFromSon(this.son[0], minX, minY, hWid, hHei));
-        Array.prototype.push.apply(partitions, partFromSon(this.son[1], minX + hWid, minY, hWid, hHei));
-        Array.prototype.push.apply(partitions, partFromSon(this.son[2], minX, minY + hHei, hWid, hHei));
-        Array.prototype.push.apply(partitions, partFromSon(this.son[3], minX + hWid, minY + hHei, hWid, hHei));
+        Array.prototype.push.apply(partitions, partFromSon(this.son[0], minX, minY + hHei, hWid, hHei));
+        Array.prototype.push.apply(partitions, partFromSon(this.son[1], minX + hWid, minY + hHei, hWid, hHei));
+        Array.prototype.push.apply(partitions, partFromSon(this.son[2], minX, minY, hWid, hHei));
+        Array.prototype.push.apply(partitions, partFromSon(this.son[3], minX + hWid, minY, hWid, hHei));
 
         return partitions;
     };

@@ -46,15 +46,15 @@ define(['./constant', './quadOP', './../../shape/Point'], function (cons, qOP, P
      * while JAVAAPPLET in bottom-left.
      */
     pro.PQCompare = function (pt) {
-        // NW(0): x< this.x  & y< this.y
-        // NE(1): x>=this.x  & y< this.y
-        // SW(2): x< this.x  & y<=this.y
-        // SE(3): x>=this.x  & y<=this.y
+        // NW(0): x< this.x  & y>=this.y
+        // NE(1): x>=this.x  & y>=this.y
+        // SW(2): x< this.x  & y< this.y
+        // SE(3): x>=this.x  & y< this.y
         if (pt.x < this.pt.x) { // West
-            return (pt.y > this.pt.y) ? cons.SW : cons.NW;
+            return (pt.y < this.pt.y) ? cons.SW : cons.NW;
         }
         // East
-        return (pt.y > this.pt.y) ? cons.SE : cons.NE;
+        return (pt.y < this.pt.y) ? cons.SE : cons.NE;
     };
 
     // ----------------------------
@@ -384,10 +384,10 @@ define(['./constant', './quadOP', './../../shape/Point'], function (cons, qOP, P
             // horizontal partition
             partition.push([minX, this.pt.y, maxX, this.pt.y]);
             // get partition from sons
-            Array.prototype.push.apply(partition, this.getPartitions.call(this.son[0], minX, minY, this.pt.x, this.pt.y));
-            Array.prototype.push.apply(partition, this.getPartitions.call(this.son[1], this.pt.x, minY, maxX, this.pt.y));
-            Array.prototype.push.apply(partition, this.getPartitions.call(this.son[2], minX, this.pt.y, this.pt.x, maxY));
-            Array.prototype.push.apply(partition, this.getPartitions.call(this.son[3], this.pt.x, this.pt.y, maxX, maxY));
+            Array.prototype.push.apply(partition, this.getPartitions.call(this.son[0], minX, this.pt.y, this.pt.x, maxY));
+            Array.prototype.push.apply(partition, this.getPartitions.call(this.son[1], this.pt.x, this.pt.y, maxX, maxY));
+            Array.prototype.push.apply(partition, this.getPartitions.call(this.son[2], minX, minY, this.pt.x, this.pt.y));
+            Array.prototype.push.apply(partition, this.getPartitions.call(this.son[3], this.pt.x, minY, maxX, this.pt.y));
 
         }
 

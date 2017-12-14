@@ -25,8 +25,8 @@ define(function () {
         // and its sub-block of each quadrant.
         // Used in regular decomposition.
         XF: [-0.25, 0.25, -0.25, 0.25],
-        // different from VASCO, N/S upside down
-        YF: [-0.25, -0.25, 0.25, 0.25]
+        // different from VASCO, N/S upside down <-- not anymore
+        YF: [0.25, 0.25, -0.25, -0.25]
     };
     return constant;
 });
