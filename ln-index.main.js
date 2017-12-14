@@ -86,6 +86,8 @@ define(function (require) {
         };
         layerPartition.selectAll('*').remove();
         layerLines.selectAll('*').remove();
+        $('#tree').text('');
+        $('#status').text('reinit');
     }
 
     function drawPartition() {
