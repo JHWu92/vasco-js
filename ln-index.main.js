@@ -46,7 +46,9 @@ define(function (require) {
 
         // Tree structure
         Trees = {
-            PM1Tree: require('app/indexing/line/PM1TreePub')
+            PM1Tree: require('app/indexing/line/PM1TreePub'),
+            PM2Tree: require('app/indexing/line/PM2TreePub'),
+            PM3Tree: require('app/indexing/line/PM3TreePub')
         },
         treeType = utils.getParameterByName('type'),
         Tree;
@@ -72,11 +74,13 @@ define(function (require) {
         // current drawing state
         state = {
             m: [0, 0],
-            autopid: 0,
+            mPrev: [0, 0],
+            autolid: 0,
             onId: '',
-            onClass: '',
+            downOnClass: '',
             etype: 0,
-            pts: {}
+            rebuildOnMove: false,
+            lns: {}
         };
         layerPartition.selectAll('*').remove();
         layerLines.selectAll('*').remove();
@@ -102,6 +106,24 @@ define(function (require) {
         }
     }
 
+    function getNearestPoint(x, y){
+        var nearPtExistLn, existLn, i;
+        for (i in state.lns) {
+            if (i === state.onId) {
+                continue;
+            }
+            existLn = state.lns[i];
+            nearPtExistLn = existLn.nearEndPt(x, y);
+
+            if (nearPtExistLn !== 0) {
+                console.log('need to snap to ' + existLn.toString(), 'nearPtExistLn:', nearPtExistLn);
+                $('#status').text('snap to ' + existLn.pts[nearPtExistLn].toString());
+                return existLn.pts[nearPtExistLn];
+            }
+        }
+        return null;
+    }
+    
     function snapNewLine() {
         var nearPtExistLn, existLn, i,
             ln = state.lns[state.onId],
@@ -252,7 +274,8 @@ define(function (require) {
                 // console.log('left click on chart');
                 var x = state.m[0],
                     y = state.m[1],
-                    pt1 = new Point(x, y),
+                    nearestPoint = getNearestPoint(x, y),
+                    pt1 = (nearestPoint===null)?new Point(x, y):nearestPoint,
                     pt2 = new Point(x, y),
                     lid = 'lid_' + state.autolid,
                     sLn = new SvgLn(layerLines, lid, pt1, pt2);

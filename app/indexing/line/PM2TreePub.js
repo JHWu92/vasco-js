@@ -2,16 +2,16 @@
 
 define(function (require) {
     'use strict';
-    var PM1Tree = require('./PM1Tree'),
+    var PM2Tree = require('./PM2Tree'),
         PMGenericPub = require('./PMGenericPub'),
-        pub = new PMGenericPub(PM1Tree);
+        pub = new PMGenericPub(PM2Tree);
 
     function orderDependent() {
         return 'order independent';
     }
 
     function getName() {
-        return 'PM1 Quadtree';
+        return 'PM2 Quadtree';
     }
 
     function insert(pt1, pt2) {

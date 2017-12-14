@@ -1,8 +1,9 @@
 /*global define*/
-
+/*opHelper === mostly GenericLine*/
 define(function (require) {
     'use strict';
 
+    
     var cons = require('./constant'),
         Point = require('app/shape/Point'),
         QEdgeList = require('./QEdgeList'),
