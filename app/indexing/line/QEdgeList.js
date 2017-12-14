@@ -10,10 +10,11 @@ define(function () {
 
     var pro = QEdgeList.prototype;
     pro.length = function () {
-        var n = this.NEXT,
+        var n = this,
             i = 1;
         while (n.NEXT !== null) {
             i += 1;
+            n = n.NEXT;
         }
         return i;
     };

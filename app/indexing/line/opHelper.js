@@ -65,10 +65,10 @@ define(function (require) {
         while (l !== null) { // erase duplicate elements just once
             for (pt = r; pt !== null; pt = pt.NEXT) {
                 if (l.DATA.equals(pt.DATA)) {
-
                     for (loc = left; loc !== l; loc = loc.NEXT) {
                         if (loc.DATA.equals(l.DATA)) {
                             pt = null;
+                            console.log('setDiff: pt=null');
                             break;
                         }
                     }
@@ -84,6 +84,8 @@ define(function (require) {
                     root.Next = last;
                 }
             }
+            
+            console.log('l=l.Next');
             l = l.NEXT;
         }
         

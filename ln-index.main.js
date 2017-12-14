@@ -48,7 +48,9 @@ define(function (require) {
         Trees = {
             PM1Tree: require('app/indexing/line/PM1TreePub'),
             PM2Tree: require('app/indexing/line/PM2TreePub'),
-            PM3Tree: require('app/indexing/line/PM3TreePub')
+            PM3Tree: require('app/indexing/line/PM3TreePub'),
+            PMRTree: require('app/indexing/line/PMRTreePub'),
+            PMBucketTree: require('app/indexing/line/PMBucketTreePub'),
         },
         treeType = utils.getParameterByName('type'),
         Tree;
@@ -106,7 +108,7 @@ define(function (require) {
         }
     }
 
-    function getNearestPoint(x, y){
+    function getNearestPoint(x, y) {
         var nearPtExistLn, existLn, i;
         for (i in state.lns) {
             if (i === state.onId) {
@@ -116,14 +118,14 @@ define(function (require) {
             nearPtExistLn = existLn.nearEndPt(x, y);
 
             if (nearPtExistLn !== 0) {
-                console.log('need to snap to ' + existLn.toString(), 'nearPtExistLn:', nearPtExistLn);
+                // console.log('need to snap to ' + existLn.toString(), 'nearPtExistLn:', nearPtExistLn);
                 $('#status').text('snap to ' + existLn.pts[nearPtExistLn].toString());
                 return existLn.pts[nearPtExistLn];
             }
         }
         return null;
     }
-    
+
     function snapNewLine() {
         var nearPtExistLn, existLn, i,
             ln = state.lns[state.onId],
@@ -275,7 +277,7 @@ define(function (require) {
                 var x = state.m[0],
                     y = state.m[1],
                     nearestPoint = getNearestPoint(x, y),
-                    pt1 = (nearestPoint===null)?new Point(x, y):nearestPoint,
+                    pt1 = (nearestPoint === null) ? new Point(x, y) : nearestPoint,
                     pt2 = new Point(x, y),
                     lid = 'lid_' + state.autolid,
                     sLn = new SvgLn(layerLines, lid, pt1, pt2);
