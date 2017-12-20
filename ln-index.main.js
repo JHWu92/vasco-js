@@ -51,6 +51,7 @@ define(function (require) {
             PM3Tree: require('app/indexing/line/PM3TreePub'),
             PMRTree: require('app/indexing/line/PMRTreePub'),
             PMBucketTree: require('app/indexing/line/PMBucketTreePub'),
+            RTree: require('app/indexing/line/LineRTreePub')
         },
         treeType = utils.getParameterByName('type'),
         Tree;

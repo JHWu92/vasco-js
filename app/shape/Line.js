@@ -1,9 +1,11 @@
-define(function () {
+/*global define, Math*/
+define(['./Rectangle'], function (Rectangle) {
     'use strict';
 
     function Line(pt1, pt2) {
         this.pt1 = pt1;
         this.pt2 = pt2;
+        this.bbox = new Rectangle(Math.min(pt1.x, pt2.x), Math.min(pt1.y, pt2.y), Math.abs(pt1.x - pt2.x), Math.abs(pt1.y - pt2.y));
     }
 
     var pro = Line.prototype;
@@ -35,7 +37,11 @@ define(function () {
             (
                 (this.pt1.equals(ln.pt1) && this.pt2.equals(ln.pt2)) ||
                 (this.pt1.equals(ln.pt2) && this.pt2.equals(ln.pt1))
-            )
+            );
+    };
+
+    pro.getBB = function () {
+        return this.bbox;
     };
 
     return Line;
