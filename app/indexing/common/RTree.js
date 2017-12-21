@@ -526,6 +526,17 @@ define(function (require) {
 
     }
 
+    function getDepth(r){
+        if (typeof r === 'undefined'){
+            return getDepth(root);
+        }
+        
+        if(r === null){
+            return 0;
+        }
+        
+        return getDepth(r.rarray[0]) +1;
+    }
     return {
         RTree: RTree,
         Insert: localInsert,
@@ -535,6 +546,7 @@ define(function (require) {
         getRoot: getRoot,
         treeJSON: treeJSON,
         treeString: treeString,
-        getPartitions: getPartitions
+        getPartitions: getPartitions,
+        getDepth: getDepth
     }
 });

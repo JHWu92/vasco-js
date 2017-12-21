@@ -34,10 +34,10 @@ define(function () {
                 height: this.height,
                 id: this.id,
                 'class': this.cname
-            })
-            .style({
-                cursor: 'pointer'
             });
+            /*.style({
+                cursor: 'pointer'
+            });*/
     };
     return SvgRect;
 });

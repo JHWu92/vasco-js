@@ -5,7 +5,8 @@ define(function (require) {
 
     var $ = require('jquery'),
         Line = require('app/shape/Line'),
-        RTree = require('app/indexing/common/RTree');
+        RTree = require('app/indexing/common/RTree'),
+        total_level = 1;
 
     function init() {
         var minNodeLen = parseInt($('#minNodeLen').val()),
@@ -28,13 +29,31 @@ define(function (require) {
             str += '<option value="' + structs[i] + '">' + structs[i] + '</option>';
         }
         str += '</select><br>';
-        str += '<button id="update">update</button>'
+        str += '<button id="update">update</button>' + '<br><br>';
+        str += '<p><strong>Show rectangles on level:</strong></p>';
+        str += '<div id="RtreeLevel"></div>';
         return str;
+    }
+
+    function updateLevelOptions() {
+        var html = '',
+            i;
+        for (i = 0; i < total_level-1; i += 1) {
+            html += '<label for="level_"' + i + '>level ' + i + ' </label> ';
+            html += '<input type="checkbox" id="level_"' + i + ' name="level_"' + i + ' value=' + i + ' checked /><br>';
+        }
+        $('#RtreeLevel').html(html);
+
+        $('#RtreeLevel :checkbox').change(function () {
+            $('.level_' + $(this).val()).toggleClass('hide');
+        });
     }
 
     function insert(pt1, pt2) {
         var line = new Line(pt1, pt2);
         RTree.Insert(line);
+        total_level = RTree.getDepth();
+        updateLevelOptions();
         return true;
     }
 
@@ -48,16 +67,12 @@ define(function (require) {
         return RTree.getPartitions();
     }
 
-    function rebuild (svgLns, autolid) {
+    function rebuild(svgLns, autolid) {
         var i;
         init();
         for (i = 0; i < autolid; i = i + 1) {
             if (svgLns.hasOwnProperty('lid_' + i)) {
-                this.insert(
-                    svgLns['lid_' + i].pt1,
-                    svgLns['lid_' + i].pt2
-                );
-
+                insert(svgLns['lid_' + i].pt1, svgLns['lid_' + i].pt2);
             }
         }
         return {

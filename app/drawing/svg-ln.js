@@ -48,10 +48,10 @@ define(function () {
                 'stroke-linecap': "round",
                 'stroke-width': strokeWidth,
                 'class': this.cname
-            })
-            .style({
-                cursor: 'pointer'
             });
+            /*.style({
+                cursor: 'pointer'
+            });*/
     };
 
     pro.legitLn = function () {

@@ -107,7 +107,7 @@ define(function (require) {
             rect = partitions[i];
 //            console.log(rect);
             svgPart = new SvgRect(layerPartition, 'partition_' + i, rect.x, rect.y, rect.w, rect.h);
-            svgPart.setClass('partition level'+rect.level);
+            svgPart.setClass('partition'+((rect.hasOwnProperty('level'))?' level_'+rect.level:''));
             svgPart.draw();
         }
     }
