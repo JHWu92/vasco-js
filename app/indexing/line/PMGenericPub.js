@@ -27,7 +27,7 @@ define(function (require) {
     };
 
     pro.options = function () {
-        return  '<p><strong>Indexing parameters:</strong></p>' + '<label>max decomposition level</label>: <input id="maxDecomp" value=9 ><br>' +
+        return  '<p><strong>Indexing parameters:</strong></p>' + '<label>- max decomposition level</label>: <input id="maxDecomp" class="small-input" value=9 ><br>' +
             '<button id="update">update</button>';
     };
 

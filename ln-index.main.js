@@ -58,12 +58,14 @@ define(function (require) {
 
     for (var type in Trees) {
 
-        $('#supType').append('<li><a href="?type=' + type + '">' + Trees[type].getName() + '</a></li>');
+        // $('#supType').append('<li><a href="?type=' + type + '">' + Trees[type].getName() + '</a></li>');
+        $('#supType').append('<option id="'+type+'" value="'+type+'">'+Trees[type].getName()+'</option>')
     }
     // init chosen Tree structure
     treeType = (typeof treeType === 'undefined' || !Trees.hasOwnProperty(treeType)) ? 'PM1Tree' : treeType;
     Tree = Trees[treeType];
     $('#treeType').text(Tree.getName() + ', ' + Tree.orderDependent());
+    $('#'+treeType).attr('selected', 'selected');
     $('#options').append(Tree.options());
     $('#update').on('click', updateParam);
     Tree.init();

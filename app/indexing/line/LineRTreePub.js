@@ -22,9 +22,9 @@ define(function (require) {
     function options() {
         var i, structs = ['Linear'],
             str = '<p><strong>Indexing parameters:</strong></p>';
-        str += '<label> min node length</label>: <input id="minNodeLen" value=2><br>';
-        str += '<label> max node length</label>: <input id="maxNodeLen" value=4><br>';
-        str += 'split mode: <select id="splitMode">';
+        str += '<label>- min node length</label>: <input class="small-input" id="minNodeLen" value=2><br>';
+        str += '<label>- max node length</label>: <input class="small-input" id="maxNodeLen" value=4><br>';
+        str += '- split mode: <select id="splitMode">';
         for (i = 0; i < structs.length; i += 1) {
             str += '<option value="' + structs[i] + '">' + structs[i] + '</option>';
         }
@@ -39,8 +39,9 @@ define(function (require) {
         var html = '',
             i;
         for (i = 0; i < total_level-1; i += 1) {
+            html += '<input type="checkbox" id="level_"' + i + ' name="level_"' + i + ' value=' + i + ' checked /> ';
             html += '<label for="level_"' + i + '>level ' + i + ' </label> ';
-            html += '<input type="checkbox" id="level_"' + i + ' name="level_"' + i + ' value=' + i + ' checked /><br>';
+            html += '<br>';
         }
         $('#RtreeLevel').html(html);
 

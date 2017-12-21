@@ -29,8 +29,8 @@ define(function (require) {
     };
 
     pro.options = function () {
-        return '<label>max decomposition level</label>: <input id="maxDecomp" value=9 ><br>' +
-            '<label>max bucket size</label>: <input id="maxBucketSize" value=3 ><br>' +
+        return '<p><strong>Indexing parameters:</strong></p>'+'<label>- max decomposition level</label>: <input id="maxDecomp" class="small-input" value=9 ><br>' +
+            '<label>- max bucket size</label>: <input id="maxBucketSize" class="small-input" value=3 ><br>' +
             '<button id="update">update</button>';
     };
 

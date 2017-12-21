@@ -13,26 +13,21 @@
     <div id="container">
         <div id="left">
             <strong id="treeType"></strong>
-            <br>
+            <br><br>
             <svg id="indexing" class="chart" xmlns="http://www.w3.org/2000/svg" transform="scale(1,-1)"></svg>
-            <br>
-            <strong>Mouse: </strong><label id="x"></label>, <label id="y"></label>
-            <br>
+            <br><br>
+            <strong>Cursor: </strong><label id="x"></label>, <label id="y"></label>
+            <br><br>
             <strong>Status: </strong><label id="status"></label>
-            <br>
-            <strong>Data in Tree:</strong>
-            <pre id="tree"></pre>
         </div>
         <div id="right">
             <select onchange="location = this.value;">
-                <option value="./pt-index.html">Point Applet</option>
                 <option value="./ln-index.html">Line Applet</option>
+                <option value="./pt-index.html">Point Applet</option>
             </select>
-            <br> Data structure: <select id="supType" onchange="location = '?type='+this.value;">
-                <option value="11">aa</option>
-                <option value="22">bb</option>
+            <br><br> Data structure: <select id="supType" onchange="location = '?type='+this.value;">
             </select>
-            <br> Operations: <select>
+            <br><br> Operations: <select>
                 <option value="imd">Insert/Move/Delete</option>
             </select>
             <div id="options"></div>
@@ -42,9 +37,70 @@
                 <p>- Move: hover on a line to drag a line; hover near an endpoint to drag an endpoint</p>
                 <p>- Delete: hover on a line to delete</p>
             </div>
+            <p> ---- ↓ not implemented ↓ ----</p>
+            <button>Zoom window</button>
+            <br> Speed: 
+            <input type="button" value="-" class="qtyminus" field="speed" />
+            <input type="text" name="speed" value="1" class="small-input" />
+            <input type="button" value="+" class="qtyplus" field="speed" />
+            <br> Progess: 
+            <input type="button" value="-" class="qtyminus" field="progress" />
+            <input type="text" name="progress" value="1" class="small-input" />
+            <input type="button" value="+" class="qtyplus" field="progress" />
+            <br> Run Mode: <select>
+                <option>Continuous</option>
+                <option>Stop on object</option>
+            </select>
+
         </div>
     </div>
-    
+
+    <br style="clear: both;">
+    <div id="bottom">
+        <br><br>
+        <strong>Data in Tree:</strong>
+        <pre id="tree"></pre>
+    </div>
+
     <script data-main="ln-index.config" src="vendors/require.js"></script>
+    <script src="vendors/jquery-3.2.1.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(function() {
+            // This button will increment the value
+            $('.qtyplus').click(function(e) {
+                // Stop acting like a button
+                e.preventDefault();
+                // Get the field name
+                fieldName = $(this).attr('field');
+                // Get its current value
+                var currentVal = parseInt($('input[name=' + fieldName + ']').val());
+                // If is not undefined
+                if (!isNaN(currentVal)) {
+                    // Increment
+                    $('input[name=' + fieldName + ']').val(currentVal + 1);
+                } else {
+                    // Otherwise put a 0 there
+                    $('input[name=' + fieldName + ']').val(0);
+                }
+            });
+            // This button will decrement the value till 0
+            $(".qtyminus").click(function(e) {
+                // Stop acting like a button
+                e.preventDefault();
+                // Get the field name
+                fieldName = $(this).attr('field');
+                // Get its current value
+                var currentVal = parseInt($('input[name=' + fieldName + ']').val());
+                // If it isn't undefined or its greater than 0
+                if (!isNaN(currentVal) && currentVal > 0) {
+                    // Decrement one
+                    $('input[name=' + fieldName + ']').val(currentVal - 1);
+                } else {
+                    // Otherwise put a 0 there
+                    $('input[name=' + fieldName + ']').val(0);
+                }
+            });
+        });
+    </script>
 </body>
 </html>
