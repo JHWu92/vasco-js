@@ -2,30 +2,85 @@ circle:hover {
     fill: #2ca25f;
 }
 
+.line {
+    stroke: black;
+    stroke-width: 5px;
+    cursor: pointer;
+}
+
+.hide {
+    display: none;
+}
+
+.line:hover {
+    stroke: #2ca25f;
+    stroke-width: 6px;
+
+}
+
 line.partition {
     stroke: steelblue;
     stroke-width: 1px;
+    cursor: auto;
     /*stroke-linecap: round;*/
 }
-rect.partition{
-    stroke: steelblue;
-    stroke-width : 1px;
-    fill: None;
+
+rect {
+    cursor: pointer;
 }
+
+rect.partition {
+    stroke: steelblue;
+    stroke-width: 1px;
+    fill: None;
+    cursor: auto;
+}
+
+rect.level_0 {
+    stroke: black;
+}
+
+rect.level_1 {
+    stroke: #FF145F;
+}
+
+rect.level_2 {
+    stroke: #14A3FF;
+}
+
+rect.level_3 {
+    stroke: #4AE862;
+}
+
+rect.level_4 {
+    stroke: #D743F9;
+}
+
+rect.level_5 {
+    stroke: #FF145F;
+}
+
 svg {
     border: 1px solid grey;
     width: 700px;
     height: 700px;
 }
 
-.line{
-    stroke: black;
-    stroke-width: 5px;
+#container {
+    float:left;
+}
+#left{
+    float: left;
+    margin-right: 20px;
+}
+#right{
+    display: inline-block;
+    width: 300px
 }
 
-.line:hover{
-    stroke: #2ca25f;
-    stroke-width: 6px;
+#help-text{
+    width: 100%;
+    border-style: solid;
+    border-width: 1px;
+    padding: 0px 10px
 }
-
-

@@ -1,101 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
+<html>
+	<head>
     <title>Line Indexing</title>
-
-    <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0">
     <link rel="stylesheet" href="css/main.css">
-
-    <!-- Custom styles for this template -->
-    <style type="text/css">
-        body {
-            padding-top: 5rem;
-            padding-left: 5rem;
-            padding-right: 5rem;
-        }
-
-    </style>
 </head>
-
 
 <body>
 
-    <div class="row">
-        <div class="col-xl-3">
-            <p>Other data types: <a href="pt-index.html">Points</a></p>
-
-            <h3>Line Indexing Instruction</h3>
-            <ul>
-                <li>Normal Mode
-                    <ul>
-                        <li>On blank:
-                            <ul>
-                                <li>Left click and drag to insert</li>
-                                <li>If endpoint is near to an existing line, this endpoint will be snapped to that line</li>
-                            </ul>
-                        </li>
-                        <li>Hovering on an end point:
-                            <ul>
-                                <li>Left click to drag</li>
-                            </ul>
-                        </li>
-                        <li>Hovering on a line:
-                            <ul>
-                                <li>Left click to drag</li>
-                                <li>Right click to delete</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-            <p><strong>Current data structure</strong>: <label id="treeType"></label></p>
-            <p><strong>Supported data structure</strong>:</p>
-            <ul id="supType"></ul>
-        </div>
-        <div class="col-xl-5" style="min-width: 700px"><svg id="indexing" class="chart" xmlns="http://www.w3.org/2000/svg" transform="scale(1,-1)"></svg></div>
-        <div class="col-xl-4">
-            <div id="options"></div>
-            <p><strong>Mouse</strong>: <label id="x">0</label>, <label id="y">0</label></p>
-            <p><strong>Status</strong>: <label id="status"></label></p>
-            <p><strong>Tree</strong>: </p>
+    <div id="container">
+        <div id="left">
+            <strong id="treeType"></strong>
+            <br>
+            <svg id="indexing" class="chart" xmlns="http://www.w3.org/2000/svg" transform="scale(1,-1)"></svg>
+            <br>
+            <strong>Mouse: </strong><label id="x"></label>, <label id="y"></label>
+            <br>
+            <strong>Status: </strong><label id="status"></label>
+            <br>
+            <strong>Data in Tree:</strong>
             <pre id="tree"></pre>
         </div>
+        <div id="right">
+            <select onchange="location = this.value;">
+                <option value="./pt-index.html">Point Applet</option>
+                <option value="./ln-index.html">Line Applet</option>
+            </select>
+            <br> Data structure: <select id="supType" onchange="location = '?type='+this.value;">
+                <option value="11">aa</option>
+                <option value="22">bb</option>
+            </select>
+            <br> Operations: <select>
+                <option value="imd">Insert/Move/Delete</option>
+            </select>
+            <div id="options"></div>
+            <p style="text-align: center">Help</p>
+            <div id="help-text">
+                <p>- Insert: click and drag to insert. To snap an endpoint, click or drag an endpoint near existing endpoints</p>
+                <p>- Move: hover on a line to drag a line; hover near an endpoint to drag an endpoint</p>
+                <p>- Delete: hover on a line to delete</p>
+            </div>
+        </div>
     </div>
-    <!-- /.container -->
-
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-
+    
     <script data-main="ln-index.config" src="vendors/require.js"></script>
-
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script>
-        (function() {
-            'use strict'
-
-            if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
-                var msViewportStyle = document.createElement('style')
-                msViewportStyle.appendChild(
-                    document.createTextNode(
-                        '@-ms-viewport{width:auto!important}'
-                    )
-                )
-                document.head.appendChild(msViewportStyle)
-            }
-
-        }())
-
-    </script>
-
 </body>
-
 </html>
