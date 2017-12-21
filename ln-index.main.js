@@ -105,8 +105,9 @@ define(function (require) {
         // draw partitions
         for (i = 0; i < partitions.length; i++) {
             rect = partitions[i];
+//            console.log(rect);
             svgPart = new SvgRect(layerPartition, 'partition_' + i, rect.x, rect.y, rect.w, rect.h);
-            svgPart.setClass('partition');
+            svgPart.setClass('partition level'+rect.level);
             svgPart.draw();
         }
     }

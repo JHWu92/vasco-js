@@ -19,7 +19,7 @@ define(['./Rectangle'], function (Rectangle) {
     };
 
     pro.toString = function () {
-        return [this.name, this.id, this.getPointsStr()].join(' ');
+        return [this.name, this.getPointsStr()].join(' ');
     };
 
     pro.update = function (args) {

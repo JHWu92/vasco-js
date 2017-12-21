@@ -15,15 +15,14 @@ define(function (require) {
     }
 
     function toString() {
-        console.log(RTree.getRoot());
-        return 'Rtree';
+        return RTree.treeString();
     }
 
     function options() {
         var i, structs = ['Linear'],
             str = '<p><strong>Indexing parameters:</strong></p>';
-        str += '<label> min node length</label>: <input id="minNodeLen" value=1><br>';
-        str += '<label> max node length</label>: <input id="maxNodeLen" value=3><br>';
+        str += '<label> min node length</label>: <input id="minNodeLen" value=2><br>';
+        str += '<label> max node length</label>: <input id="maxNodeLen" value=4><br>';
         str += 'split mode: <select id="splitMode">';
         for (i = 0; i < structs.length; i += 1) {
             str += '<option value="' + structs[i] + '">' + structs[i] + '</option>';
@@ -46,13 +45,23 @@ define(function (require) {
     }
 
     function getPartitions() {
-        return [];
+        return RTree.getPartitions();
     }
 
-    function rebuild(svgLns, autolid) {
+    function rebuild (svgLns, autolid) {
+        var i;
+        init();
+        for (i = 0; i < autolid; i = i + 1) {
+            if (svgLns.hasOwnProperty('lid_' + i)) {
+                this.insert(
+                    svgLns['lid_' + i].pt1,
+                    svgLns['lid_' + i].pt2
+                );
+
+            }
+        }
         return {
-            suceed: false,
-            msg: 'hasnt been implemented'
+            succeed: true
         };
     }
 

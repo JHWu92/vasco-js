@@ -11,17 +11,21 @@ define(['./Point'], function (Point) {
         this.height = height;
     }
     var Line, pro = Rectangle.prototype;
-    
+
     require(["app/shape/Line"], function (L) {
         // Delayed loading circular dependency
         Line = L;
     });
-    
+
+    pro.toString = function () {
+        return [this.x, this.y, this.width, this.height].join(' ');
+    };
     pro.union = function (r) {
         var x1 = Math.min(this.x, r.x),
-            x2 = Math.max(this.x, r.x),
+            x2 = Math.max(this.x + this.width, r.x + r.width),
             y1 = Math.min(this.y, r.y),
-            y2 = Math.max(this.y, r.y);
+            y2 = Math.max(this.y + this.height, r.y + r.height);
+
         return new Rectangle(x1, y1, x2 - x1, y2 - y1);
     };
     pro.getArea = function () {

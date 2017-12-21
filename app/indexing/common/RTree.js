@@ -18,6 +18,7 @@ define(function (require) {
             this.rarray[i] = null;
         }
         this.occup = 0;
+        this.btreeKey = 0;
     }
 
     function RTreeLeaf(gm, minlength, maxlength) {
@@ -25,6 +26,18 @@ define(function (require) {
         this.geom = gm;
     }
     extend(RTreeLeaf, RTreeNode);
+
+    RTreeNode.prototype.toString = function () {
+        return 'RTreeNode/Leaf BBox: ' + this.boundingBox.toString() + ', len_rarray: ' + this.rarray.length + ', btreeKey: ' + this.btreeKey + ', occup: ' + this.occup;
+    }
+    //    RTreeNode.prototype.setBBox = function (newBB) {
+    //        console.log('**********');
+    //        console.log('newBB', newBB, 'this.bb', this.boundingBox);
+    //        this.boundingBox = newBB;
+    //        console.log('this.bb', this.boundingBox);
+    //        console.log('**********');
+    //
+    //    };
 
     /*return new node*/
     RTreeNode.prototype.splitNode = function (min) {
@@ -75,96 +88,108 @@ define(function (require) {
             maxMinNodeY = -1,
             minMaxNodeX = -1,
             minMaxNodeY = -1,
-            i, j;
+            i, j,
+            upperLeftX, upperLeftY, bottomRightX, bottomRightY;
 
         for (i = 0; i < this.rarray.length; i += 1) {
-            if (this.rarray[i].boundingBox.x > maxMinValX) {
-                maxMinValX = this.rarray[i].boundingBox.x;
+            upperLeftX = this.rarray[i].boundingBox.x;
+            upperLeftY = this.rarray[i].boundingBox.y;
+            bottomRightX = this.rarray[i].boundingBox.x + this.rarray[i].boundingBox.width;
+            bottomRightY = this.rarray[i].boundingBox.y + this.rarray[i].boundingBox.height;
+            // console.log(i, upperLeftX, upperLeftY, bottomRightX, bottomRightY);
+            if (upperLeftX > maxMinValX) {
+                maxMinValX = upperLeftX
                 maxMinNodeX = i;
             }
-            if (this.rarray[i].boundingBox.y > maxMinValY) {
-                maxMinValY = this.rarray[i].boundingBox.y;
+            if (upperLeftY > maxMinValY) {
+                maxMinValY = upperLeftY;
                 maxMinNodeY = i;
             }
-            if (this.rarray[i].boundingBox.x > minValX) {
-                minValX = this.rarray[i].boundingBox.x;
+            if (upperLeftX < minValX) {
+                minValX = upperLeftX;
             }
-            if (this.rarray[i].boundingBox.y > minValY) {
-                minValY = this.rarray[i].boundingBox.y;
+            if (upperLeftY < minValY) {
+                minValY = upperLeftY;
             }
-            if (this.rarray[i].boundingBox.x + this.rarray[i].boundingBox.width < minMaxValX) {
-                minMaxValX = this.rarray[i].boundingBox.x + this.rarray[i].boundingBox.width;
+            if (bottomRightX < minMaxValX) {
+                minMaxValX = bottomRightX;
                 minMaxNodeX = i;
             }
-            if (this.rarray[i].boundingBox.y + this.rarray[i].boundingBox.height < minMaxValY) {
-                minMaxValY = this.rarray[i].boundingBox.y + this.rarray[i].boundingBox.height;
+            if (bottomRightY < minMaxValY) {
+                minMaxValY = bottomRightY;
                 minMaxNodeY = i;
             }
-            if (this.rarray[i].boundingBox.x + this.rarray[i].boundingBox.width > maxValX) {
-                maxValX = this.rarray[i].boundingBox.x + this.rarray[i].boundingBox.width;
+            if (bottomRightX > maxValX) {
+                maxValX = bottomRightX;
             }
-            if (this.rarray[i].boundingBox.y + this.rarray[i].boundingBox.height > maxValY) {
-                maxValY = this.rarray[i].boundingBox.y + this.rarray[i].boundingBox.height;
+            if (bottomRightY > maxValY) {
+                maxValY = bottomRightY;
             }
-
-            var seed1, seed2,
-                sepX = (maxMinValX - minMaxValX) / (maxValX - minValX),
-                sepY = (maxMinValY - minMaxValY) / (maxValY - minValY);
-
-            if (sepX > sepY) {
-                seed1 = maxMinNodeX;
-                seed2 = minMaxNodeX;
-            } else {
-                seed1 = maxMinNodeY;
-                seed2 = minMaxNodeY;
-            }
-
-            var min = [];
-            min[1] = seed1;
-            min[this.rarray.length] = seed2; // min[0] is undefined
-
-            var forward = 2,
-                backward = this.rarray.length - 1,
-                r1 = this.rarray[seed1].boundingBox,
-                r2 = this.rarray[seed2].boundingBox;
-
-            while (forward <= backward) {
-                var n = -1,
-                    maxdiff = Number.MIN_VALUE;
-                loop:
-                    for (i = 0; i < this.rarray.length; i += 1) {
-                        for (j = 1; j < forward; j += 1)
-                            if (min[j] == 1)
-                                continue loop;
-                        for (j = this.rarray.length; j > backward; j -= 1)
-                            if (min[j] == i)
-                                continue loop;
-                        n = i;
-                        break;
-                    } // generates nexxt non-used index
-
-                var tst1 = r1.union(this.rarray[n].boundingBox);
-                var tst2 = r2.union(this.rarray[n].boundingBox);
-
-                if (tst1.getArea() - r1.getArea() > tst2.getArea() - r2.getArea()) {
-                    min[backward] = n;
-                    r2 = r2.union(this.rarray[n].boundingBox);
-                    backward -= 1;
-                } else {
-                    min[forward] = n;
-                    r1 = r1.union(this.rarray[n].boundingBox);
-                    forward += 1;
-                }
-            }
-
-            min[0] = forward - 1;
-            if (min[0] < this.minlength)
-                min[0] = this.minlength;
-            if (min[0] > this.rarray.length - this.minlength)
-                min[0] = this.rarray.length - this.minlength;
-
-            return this.splitNode(min);
         }
+
+        var seed1, seed2,
+            sepX = (maxMinValX - minMaxValX) / (maxValX - minValX),
+            sepY = (maxMinValY - minMaxValY) / (maxValY - minValY);
+
+        if (sepX > sepY) {
+            seed1 = maxMinNodeX;
+            seed2 = minMaxNodeX;
+        } else {
+            seed1 = maxMinNodeY;
+            seed2 = minMaxNodeY;
+        }
+        // console.log(maxMinNodeX, minMaxNodeX, maxMinNodeY, minMaxNodeY);
+        // console.log('on', (sepX > sepY) ? 'x' : 'y', 'seed', seed1, seed2);
+        var min = [];
+        min[1] = seed1;
+        min[this.rarray.length] = seed2; // min[0] is undefined
+
+        var forward = 2,
+            backward = this.rarray.length - 1,
+            r1 = this.rarray[seed1].boundingBox,
+            r2 = this.rarray[seed2].boundingBox;
+        // console.log('forward backward:', forward, backward);
+        while (forward <= backward) {
+            var n = -1;
+            loop:
+                for (i = 0; i < this.rarray.length; i += 1) {
+                    for (j = 1; j < forward; j += 1)
+                        if (min[j] == i) {
+                            // console.log('i=', i, 'has been used before forward');
+                            continue loop;
+                        }
+                    for (j = this.rarray.length; j > backward; j -= 1)
+                        if (min[j] == i) {
+                            // console.log('i=', i, 'has been used after backward');
+                            continue loop;
+                        }
+                    n = i;
+                    break;
+                } // generates next non-used index
+            // console.log('n=', n);
+            var tst1 = r1.union(this.rarray[n].boundingBox);
+            var tst2 = r2.union(this.rarray[n].boundingBox);
+            // console.log('tst1', tst1);
+            // console.log('tst2', tst2);
+            if (tst1.getArea() - r1.getArea() > tst2.getArea() - r2.getArea()) {
+                min[backward] = n;
+                r2 = r2.union(this.rarray[n].boundingBox);
+                backward -= 1;
+            } else {
+                min[forward] = n;
+                r1 = r1.union(this.rarray[n].boundingBox);
+                forward += 1;
+            }
+        }
+
+        min[0] = forward - 1;
+        if (min[0] < this.minlength)
+            min[0] = this.minlength;
+        if (min[0] > this.rarray.length - this.minlength)
+            min[0] = this.rarray.length - this.minlength;
+        // console.log('min', min);
+        return this.splitNode(min);
+
 
     };
 
@@ -177,31 +202,30 @@ define(function (require) {
             this.boundingBox = this.boundingBox.union(this.rarray[i].boundingBox);
     };
 
+    /*r: RtreeNode/RTreeLeaft*/
     RTreeNode.prototype.insert = function (r, mode) {
-        if (typeof mode === undefined) { // assume no overflow
-            this.rarray[this.occup] = r;
-            this.occup += 1;
-            this.recalcBBox();
-            this.btreeKey = Math.max(this.btreeKey, r.btreeKey);
-        } else {
-            this.boundingBox = this.boundingBox.union(r.boundingBox);
-            this.btreeKey = Math.max(this.btreeKey, r.btreeKey);
-            this.rarray[this.occup] = r;
-            this.occup += 1;
 
-            //            if(mode === "Hilbert nonpacked" || mode === "Morton nonpacked")
-            //                return this.btree();
+        // console.log(this.toString());
+        this.boundingBox = this.boundingBox.union(r.boundingBox);
+        this.btreeKey = Math.max(this.btreeKey, r.btreeKey);
+        this.rarray[this.occup++] = r;
+        // console.log('after union:', this.boundingBox, this.btreeKey, this.occup);
+        // console.log(this.toString(), this.occup);
 
-            if (this.occup === this.rarray.length) {
-                if (mode === "Linear")
-                    return this.linear();
-                // a lot of other modes haven't been implemented
-                else
-                    return this.linear();
-            }
+        //            if(mode === "Hilbert nonpacked" || mode === "Morton nonpacked")
+        //                return this.btree();
 
-            return null;
+        if (this.occup === this.rarray.length) {
+            // console.log('overflow, split');
+            if (mode === "Linear")
+                return this.linear();
+            // TODO: a lot of other modes haven't been implemented
+            else
+                return this.linear();
         }
+
+        return null;
+
     }
 
 
@@ -222,8 +246,9 @@ define(function (require) {
             mode = structs[0];
         }
         minNodeLength = minnl;
-        maxNodeLength = maxnl;
+        maxNodeLength = maxnl+1;
         splitMode = mode;
+        root = null;
         //        initSpaceFillingCurves();
     }
 
@@ -248,8 +273,10 @@ define(function (require) {
 
     function getBtreeKey(r) {
         var DEFSIZE = 512,
-            ii = parseInt(((DEFSIZE * ((r.x + r.width / 2) - 0)) / gCons.svgWidth)), // 0 corresponding to wholeCanvas.x(for zooming?),
-            jj = parseInt(((DEFSIZE * ((r.y + r.height / 2) - 0)) / gCons.svgHeight));
+            bbox = r.getBB(),
+            ii = parseInt(((DEFSIZE * ((bbox.x + bbox.width / 2) - 0)) / gCons.svgWidth)), // 0 corresponding to wholeCanvas.x(for zooming?),
+            jj = parseInt(((DEFSIZE * ((bbox.y + bbox.height / 2) - 0)) / gCons.svgHeight));
+        
         return (splitMode === "Hilbert nonpacked") ? getHilbert(ii, jj) : getMorton(ii, jj); // getHilbert hasn't be implemented
     }
 
@@ -257,13 +284,23 @@ define(function (require) {
     function insertLoc(r, n) {
         if (n instanceof RTreeLeaf)
             return null;
-        console.log('insertLoc, n=', n);
         var rt;
+        // console.log('===============');
+        // console.log('insertLoc, original BBox', n.boundingBox);
+        // console.log('union with r.bb:', r.getBB());
+
         n.boundingBox = n.boundingBox.union(r.getBB());
+        //        n.setBBox(newbb);
+
+        // console.log('after union', n.boundingBox);
+        // console.log(n.toString());
 
         if (n.rarray[0] instanceof RTreeLeaf) { // second level from bottom
+            // console.log('n.rarray[0] instanceof RTreeLeaf')
             rt = new RTreeLeaf(r, minNodeLength, maxNodeLength);
             rt.btreeKey = getBtreeKey(r);
+            // console.log(n.boundingBox, 'insert', rt.boundingBox, 'geom:', rt.geom);
+            //            console.log(n.toString());
             return n.insert(rt, splitMode);
         }
 
@@ -295,10 +332,12 @@ define(function (require) {
         var oldr, rt, newr;
 
         if (root === null) {
+            // console.log('RTree.insert: root==null');
             root = new RTreeLeaf(r, minNodeLength, maxNodeLength);
             root.btreeKey = getBtreeKey(r);
         } else {
             if (root instanceof RTreeLeaf) {
+                // console.log('RTree.insert: root == rtreeleaf');
                 oldr = root;
                 root = new RTreeNode(r.getBB().union(oldr.boundingBox), minNodeLength, maxNodeLength);
                 root.rarray[root.occup++] = oldr;
@@ -312,6 +351,9 @@ define(function (require) {
             } else {
                 newr = insertLoc(r, root);
                 if (newr !== null) {
+                    // console.log('==========');
+                    // console.log('RTree.insert: after insertLoc, newr.bb:', newr.boundingBox);
+                    // console.log('the obj is:', newr.toString());
                     oldr = root;
                     root = new RTreeNode(newr.boundingBox.union(oldr.boundingBox), minNodeLength, maxNodeLength);
                     root.btreeKey = Math.max(oldr.btreeKey, newr.btreeKey);
@@ -328,6 +370,7 @@ define(function (require) {
     }
 
     function localInsert(r) {
+        // console.log('localinsert:', r.toString());
         if (splitMode === "R* tree")
             insertRstar(r); // TODO: not implemented
         else
@@ -336,14 +379,17 @@ define(function (require) {
 
     /*add drawables of r to v*/
     function gat(r, v) {
-        if (r === null)
+        // console.log(r,v);
+        if (r === null) {
             return;
-        else if (r instanceof RTreeLeaf)
+        } else if (r instanceof RTreeLeaf) {
+            // console.log('add one gat');
             v[v.length] = r.geom;
-        else
-            for (var i = 0; i < r.occup; i += 1)
+        } else {
+            for (var i = 0; i < r.occup; i += 1) {
                 gat(r.rarray[i], v); // go to the leaf nodes
-
+            }
+        }
     }
 
     function deleteRec(toErase, r, toRe) {
@@ -390,8 +436,11 @@ define(function (require) {
             var toRe = [],
                 i; // a list of elements to be re inserted
             deleteRec(toErase, root, toRe);
-            if (root.occup === 1)
+            // console.log(toRe.length);
+            if (root.occup === 1) {
+                // console.log('root occup = 1');
                 root = root.rarray[0];
+            }
             for (i = 0; i < toRe.length; i += 1) {
                 localInsert(toRe[i]);
             }
@@ -410,12 +459,82 @@ define(function (require) {
     function getRoot() {
         return root;
     }
+
+    function treeJSON(lev, r) {
+        var tree = {},
+            i, son;
+
+        if (typeof lev === 'undefined') {
+            lev = 0;
+        }
+        if (typeof r === 'undefined') {
+            r = root;
+        }
+
+        if (r === null) {
+            return null;
+        }
+
+        tree.lev = lev;
+        tree.btreeKey = r.btreeKey;
+        if (r instanceof RTreeLeaf) {
+            tree.leaf = r.geom.toString();
+            return tree;
+        }
+
+        tree.node = 'rect ' + [r.boundingBox.x, r.boundingBox.y, r.boundingBox.width, r.boundingBox.height].join(' ');
+        for (i = 0; i < r.occup; i += 1) {
+            son = treeJSON(lev + 1, r.rarray[i]);
+            if (son !== null) {
+                tree['son' + i] = son;
+            }
+        }
+        return tree;
+    }
+
+    function treeString() {
+        return JSON.stringify(treeJSON(), null, '  ');
+    }
+
+    function getPartitions(lev, r) {
+        if (typeof lev === 'undefined') {
+            lev = 0;
+        }
+        if (typeof r === 'undefined') {
+            r = root;
+        }
+
+        if (r === null || r instanceof RTreeLeaf) {
+            return [];
+        }
+
+        var i,
+            partitions = [{
+                type: 'rectangle',
+                x: r.boundingBox.x,
+                y: r.boundingBox.y,
+                w: r.boundingBox.width,
+                h: r.boundingBox.height,
+                level: lev
+            }];
+
+        for (i = 0; i < r.occup; i += 1) {
+            Array.prototype.push.apply(partitions, getPartitions(lev + 1, r.rarray[i]));
+        }
+        //        console.log('level:',lev, 'len:', partitions.length);
+        return partitions;
+
+    }
+
     return {
         RTree: RTree,
         Insert: localInsert,
         Delete: deleteDirect,
         getName: getName,
         orderDependent: orderDependent,
-        getRoot: getRoot
+        getRoot: getRoot,
+        treeJSON: treeJSON,
+        treeString: treeString,
+        getPartitions: getPartitions
     }
 });
