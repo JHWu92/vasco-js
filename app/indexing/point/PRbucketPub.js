@@ -33,8 +33,8 @@ define(function (require) {
     }
 
     function options() {
-        return '<label>max decomposition level</label>: <input id="maxDecomp" value=5 ><br>' +
-            '<label>max bucket size</label>: <input id="maxBucketSize" value=3 ><br>' +
+        return '<p><strong>Indexing parameters:</strong></p>' + '<label>max decomposition level</label>: <input id="maxDecomp" class="small-input" value=5 ><br>' +
+            '<label>max bucket size</label>: <input id="maxBucketSize" class="small-input" value=3 ><br>' +
             '<button id="update">update</button>';
     }
 
